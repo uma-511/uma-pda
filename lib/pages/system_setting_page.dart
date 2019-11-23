@@ -65,7 +65,13 @@ class _SystemSettingPageState extends State<SystemSettingPage> {
                         ),
                       ),
                     ),
-                    onTap: () {                
+                    onTap: () {               
+                      showDialog(
+                        context: context,
+                        builder: (context) {
+                          return CommonShowLoading();
+                        }
+                      );
                       _bloc.saveIPAndLabelLength(context, _ipController.text, _labelController.text);
                     },
                   )

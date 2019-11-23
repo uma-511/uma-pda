@@ -1,8 +1,11 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_uma/blocs/bloc_provider.dart';
 import 'package:flutter_uma/common/common_utils.dart';
 import 'package:flutter_uma/pages/home_page.dart';
 import 'package:flutter_uma/pages/login_page.dart';
+import 'package:flutter_uma/service/service_url.dart';
+import 'package:flutter_uma/vo/commen_vo.dart';
 import 'package:oktoast/oktoast.dart';
 import 'package:rxdart/rxdart.dart';
 
@@ -24,7 +27,7 @@ class SystemSettingPageBloc extends BlocBase {
       return;
     }
 
-    bool checkIPEffective = _checkIPEffective();
+    bool checkIPEffective = await _checkIPEffective(ip);
     if (checkIPEffective) {
       setIPAndLabelLength(ip, int.parse(labelLength));
       /// 检查登录状态
@@ -36,6 +39,7 @@ class SystemSettingPageBloc extends BlocBase {
         Navigator.pushAndRemoveUntil(context, CupertinoPageRoute(builder: (context) => HomePage()), (route) => route == null);
       }
     } else {
+      Navigator.pop(context);
       showToast('系统链接失败');
     }
   }
@@ -52,9 +56,19 @@ class SystemSettingPageBloc extends BlocBase {
 
 
   /// 校验IP是否有效并缓存
-  bool _checkIPEffective() {
-
-    return true;
+  Future<bool> _checkIPEffective(String ip) async {
+    try {
+      print('开始请求init>>>>>>>>>>>>>>>>>>>>>>>>');
+      var val = await Dio().get('http://$ip' + servicePath['handheldInit'], options: Options(connectTimeout: 3000));
+      CommonVo commonVo = CommonVo.fromJson(val.data);
+      if (commonVo.code == '200') {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (e) {
+      return false;
+    }
   }
 
   @override
