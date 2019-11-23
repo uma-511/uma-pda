@@ -5,7 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_uma/blocs/bloc_provider.dart';
 import 'package:flutter_uma/common/common_preference_keys.dart';
 import 'package:flutter_uma/common/common_preference_utils.dart';
-import 'package:flutter_uma/service/service_method.dart';
+import 'package:flutter_uma/service/http_util.dart';
 import 'package:flutter_uma/vo/commen_vo.dart';
 import 'package:flutter_uma/vo/label_msg_vo.dart';
 import 'package:flutter_uma/vo/sweep_code_vo.dart';
@@ -25,13 +25,17 @@ class SweepCodePageBloc extends BlocBase {
         'labelNumber': labelNumber,
         'status': status
       };
-      await requestPost('getLabelMsg', formData: formData).then((val) {
+      await HttpUtil().post('getLabelMsg', data: formData).then((val) {
         _textEditingController.text = '';
-        LabelMsgVo labelMsgVo = LabelMsgVo.fromJson(val);
-        if (labelMsgVo.code == '200') {
-          _saveLabelMsg(labelMsgVo.data);
+        if (val != null) {
+          LabelMsgVo labelMsgVo = LabelMsgVo.fromJson(val);
+          if (labelMsgVo.code == '200') {
+            _saveLabelMsg(labelMsgVo.data);
+          } else {
+            showToast(labelMsgVo.message);
+          }
         } else {
-          showToast(labelMsgVo.message);
+          showToast('获取标签信息异常');
         }
       });
     }
@@ -56,15 +60,19 @@ class SweepCodePageBloc extends BlocBase {
       'scanUser': '谢纪标',
       'status': status
     };
-    requestPost('uploadData', formData: formData).then((val) {
-      CommonVo commonVo = CommonVo.fromJson(val);
-      if (commonVo.code == '200') {
-        showToast('数据上传成功');
-        cleanSweepCodeRecord();
+    HttpUtil().post('uploadData', data: formData).then((val) {
+      if (null != val) {
+        CommonVo commonVo = CommonVo.fromJson(val);
+        if (commonVo.code == '200') {
+          showToast('数据上传成功');
+          cleanSweepCodeRecord();
+        } else {
+          showToast(commonVo.message);
+        }
       } else {
-        showToast(commonVo.message);
+        showToast('数据上传异常');
       }
-    });    
+    });
   }
 
   /// -----------------------------------------------------------------------------------------

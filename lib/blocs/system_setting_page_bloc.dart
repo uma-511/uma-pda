@@ -1,9 +1,9 @@
-import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_uma/blocs/bloc_provider.dart';
 import 'package:flutter_uma/common/common_utils.dart';
 import 'package:flutter_uma/pages/home_page.dart';
 import 'package:flutter_uma/pages/login_page.dart';
+import 'package:flutter_uma/service/http_util.dart';
 import 'package:flutter_uma/service/service_url.dart';
 import 'package:flutter_uma/vo/commen_vo.dart';
 import 'package:oktoast/oktoast.dart';
@@ -41,6 +41,7 @@ class SystemSettingPageBloc extends BlocBase {
     } else {
       Navigator.pop(context);
       showToast('系统链接失败');
+      return;
     }
   }
 
@@ -53,20 +54,17 @@ class SystemSettingPageBloc extends BlocBase {
     _iPAndLabelLengthSink.add(tempMap);
   }
 
-
-
   /// 校验IP是否有效并缓存
   Future<bool> _checkIPEffective(String ip) async {
-    try {
-      print('开始请求init>>>>>>>>>>>>>>>>>>>>>>>>');
-      var val = await Dio().get('http://$ip' + servicePath['handheldInit'], options: Options(connectTimeout: 3000));
-      CommonVo commonVo = CommonVo.fromJson(val.data);
+    var val = await HttpUtil().get('http://$ip' + servicePath['handheldInit']);
+    if (val != null) {
+      CommonVo commonVo = CommonVo.fromJson(val);
       if (commonVo.code == '200') {
         return true;
       } else {
         return false;
       }
-    } catch (e) {
+    } else {
       return false;
     }
   }
