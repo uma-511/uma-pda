@@ -42,7 +42,7 @@ class SweepCodePageBloc extends BlocBase {
   }
 
   /// 上传标签信息
-  uploadData(int status) {
+  uploadData(int status, String scanUser) {
     SweepCodeVo _sweepCodeVo = _sweepCodeVoStr == '{}' ? SweepCodeVo(generalization: [], labelList: []) : SweepCodeVo.fromJson(jsonDecode(_sweepCodeVoStr));
     List<Map<String, dynamic>> labelList = [];
     _sweepCodeVo.labelList.forEach((item) {
@@ -57,7 +57,7 @@ class SweepCodePageBloc extends BlocBase {
     }
     var formData = {
       'labelList': labelList,
-      'scanUser': '谢纪标',
+      'scanUser': scanUser,
       'status': status
     };
     HttpUtil().post('uploadData', data: formData).then((val) {

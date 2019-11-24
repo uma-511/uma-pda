@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:flutter_uma/blocs/bloc_provider.dart';
+import 'package:flutter_uma/blocs/login_page_bloc.dart';
 import 'package:flutter_uma/blocs/sweep_code_page_bloc.dart';
 import 'package:flutter_uma/common/common_message_dialog.dart';
 import 'package:flutter_uma/common/common_show_loading.dart';
@@ -24,9 +25,11 @@ class _SweepCodePageState extends State<SweepCodePage> with TickerProviderStateM
   TabController _controller;
   TextEditingController _textEditingController;
   SweepCodePageBloc _bloc;
+  LoginPageBloc _loginPageBloc;
   @override
   void initState() {
     _bloc = BlocProvider.of<SweepCodePageBloc>(context);
+    _loginPageBloc = BlocProvider.of<LoginPageBloc>(context);
     _controller = TabController(
       length: 2,
       initialIndex: 0,
@@ -150,7 +153,7 @@ class _SweepCodePageState extends State<SweepCodePage> with TickerProviderStateM
               ),
               backgroundColor: Color(0xFF19BE6B),
               onTap: () {
-                _bloc.uploadData(widget.type);
+                _bloc.uploadData(widget.type, _loginPageBloc.user.username);
               }
           ),
         ]

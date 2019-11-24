@@ -54,7 +54,7 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                 ),
               ),
-              onTap: () {                
+              onTap: () {
                 _bloc.login(context, _accountController.text, _passwordController.text);
               },
             )

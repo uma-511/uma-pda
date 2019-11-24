@@ -52,4 +52,9 @@ class CommonPreferenceUtils {
     var value = sp.getStringList(key);
     return value ?? defaultValue;
   }
+
+  removeByKey({@required String key}) async {
+    var sp = await SharedPreferences.getInstance();
+    sp.remove(key);
+  }
 }

@@ -1,7 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_uma/blocs/bloc_provider.dart';
+import 'package:flutter_uma/blocs/login_page_bloc.dart';
 import 'package:flutter_uma/common/common_message_dialog.dart';
+import 'package:flutter_uma/common/common_utils.dart';
 import 'package:flutter_uma/pages/login_page.dart';
 import 'package:flutter_uma/pages/system_setting_page.dart';
 import 'package:oktoast/oktoast.dart';
@@ -11,6 +14,7 @@ class SettingDrawerPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    LoginPageBloc _loginPageBloc = BlocProvider.of<LoginPageBloc>(context);
     return Scaffold(
       backgroundColor: Colors.cyan,
       body: SingleChildScrollView(
@@ -36,7 +40,7 @@ class SettingDrawerPage extends StatelessWidget {
                   //   ),
                   // ),
                   title: Text(
-                    '谢纪标',
+                    _loginPageBloc.user.username,
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: ScreenUtil().setSp(48)
@@ -124,6 +128,7 @@ class SettingDrawerPage extends StatelessWidget {
                           Navigator.pop(context);
                         },
                         onPositivePressEvent: () {
+                          cleanToken();
                           Navigator.pushAndRemoveUntil(context, CupertinoPageRoute(builder: (context) => LoginPage()), (route) => route == null);
                         },
                       );

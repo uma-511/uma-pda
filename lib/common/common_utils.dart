@@ -26,3 +26,8 @@ import 'common_preference_utils.dart';
   Future<String> getToken() {
     return CommonPreferenceUtils().getString(key: CommonPerferenceKeys.token);
   }
+
+  // 清空Token
+cleanToken() {
+  CommonPreferenceUtils().removeByKey(key: CommonPerferenceKeys.token);
+}
