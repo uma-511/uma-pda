@@ -39,6 +39,7 @@ class MyApp extends StatelessWidget {
       textPadding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
       radius: 20.0,
       child: MaterialApp(
+        debugShowCheckedModeBanner: false,
         title: 'UMa',
         theme: ThemeData(
           primarySwatch: Colors.blue,

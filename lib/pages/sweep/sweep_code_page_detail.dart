@@ -28,7 +28,6 @@ class _SweepCodePageDetailState extends State<SweepCodePageDetail> {
 
   @override
   Widget build(BuildContext context) {
-    
     return Scaffold(
       appBar: AppBar(
         title: Text('归类详情'),
