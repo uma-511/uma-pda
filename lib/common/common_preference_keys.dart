@@ -13,4 +13,7 @@ class CommonPerferenceKeys {
 
   /// 缓存数据
   static final String sweepCodeVokey = 'SWEEPCODEVO_KEY';
+
+  /// 用户名Key
+  static final String userNameKey = 'USERNAME_KEY';
 }

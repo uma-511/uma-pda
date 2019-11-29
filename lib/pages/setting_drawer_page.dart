@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_uma/blocs/bloc_provider.dart';
-import 'package:flutter_uma/blocs/login_page_bloc.dart';
+import 'package:flutter_uma/blocs/setting_drawer_page_bloc.dart';
 import 'package:flutter_uma/common/common_message_dialog.dart';
 import 'package:flutter_uma/common/common_utils.dart';
 import 'package:flutter_uma/pages/login_page.dart';
@@ -14,7 +14,8 @@ class SettingDrawerPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    LoginPageBloc _loginPageBloc = BlocProvider.of<LoginPageBloc>(context);
+    final SettingDrawerPageBloc _bloc = BlocProvider.of<SettingDrawerPageBloc>(context);
+    _bloc.getUserName();
     return Scaffold(
       backgroundColor: Colors.cyan,
       body: SingleChildScrollView(
@@ -33,19 +34,28 @@ class SettingDrawerPage extends StatelessWidget {
                 )
               ),
               Container(
-                child: ListTile(
-                  // leading: CircleAvatar(
-                  //   backgroundImage: NetworkImage(
-                  //     'https://p1.meituan.net/320.0/hotelbiz/1faa65f7a1446a07c01b2acbc1a9b47e372596.jpg'
-                  //   ),
-                  // ),
-                  title: Text(
-                    _loginPageBloc.user.username,
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: ScreenUtil().setSp(48)
-                    ),  
-                  ),
+                child: StreamBuilder(
+                  stream: _bloc.userNameStream,
+                  builder: (context, sanpshop) {
+                    if (sanpshop.hasData) {
+                      return ListTile(
+                        // leading: CircleAvatar(
+                        //   backgroundImage: NetworkImage(
+                        //     'https://p1.meituan.net/320.0/hotelbiz/1faa65f7a1446a07c01b2acbc1a9b47e372596.jpg'
+                        //   ),
+                        // ),
+                        title: Text(
+                          sanpshop.data,
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: ScreenUtil().setSp(48)
+                          ),  
+                        ),
+                      );
+                    } else {
+                      return ListTile();
+                    }
+                  },
                 ),
               ),
               ListTile(

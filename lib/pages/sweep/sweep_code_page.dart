@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:flutter_uma/blocs/bloc_provider.dart';
-import 'package:flutter_uma/blocs/login_page_bloc.dart';
+import 'package:flutter_uma/blocs/setting_drawer_page_bloc.dart';
 import 'package:flutter_uma/blocs/sweep_code_page_bloc.dart';
 import 'package:flutter_uma/common/common_message_dialog.dart';
 import 'package:flutter_uma/common/common_show_loading.dart';
@@ -25,11 +25,11 @@ class _SweepCodePageState extends State<SweepCodePage> with TickerProviderStateM
   TabController _controller;
   TextEditingController _textEditingController;
   SweepCodePageBloc _bloc;
-  LoginPageBloc _loginPageBloc;
+  SettingDrawerPageBloc _settingDrawerPageBloc;
   @override
   void initState() {
     _bloc = BlocProvider.of<SweepCodePageBloc>(context);
-    _loginPageBloc = BlocProvider.of<LoginPageBloc>(context);
+    _settingDrawerPageBloc = BlocProvider.of<SettingDrawerPageBloc>(context);
     _controller = TabController(
       length: 2,
       initialIndex: 0,
@@ -45,6 +45,7 @@ class _SweepCodePageState extends State<SweepCodePage> with TickerProviderStateM
     });
     _bloc.initSweepCodeVokey(widget.type);
     _bloc.getSweepCodeVo();
+    _settingDrawerPageBloc.getUserName();
     super.initState();
   }
 
@@ -115,48 +116,57 @@ class _SweepCodePageState extends State<SweepCodePage> with TickerProviderStateM
           )
         ],
       ),
-      floatingActionButton: SpeedDial(
-        child: ImageIcon(
-          AssetImage('assets/icon/icon_fun.png'),
-          size: 42,
-        ),
-        children:[
-          SpeedDialChild(
+      floatingActionButton: StreamBuilder(
+        stream: _settingDrawerPageBloc.userNameStream,
+        builder: (context, sanpshop) {
+          if (!sanpshop.hasData) {
+            return Container();
+          } else {
+            return SpeedDial(
               child: ImageIcon(
-                AssetImage('assets/icon/icon_clean.png')
+                AssetImage('assets/icon/icon_fun.png'),
+                size: 42,
               ),
-              backgroundColor: Color(0xFFED4014),
-              onTap: () {
-                showDialog(
-                  context: context,
-                  builder: (context) {
-                    return CommonMessageDialog(
-                      title: '清空确认',
-                      widget: Text('是否确认清空'),
-                      onCloseEvent: () {
-                        Navigator.pop(context);
-                      },
-                      onPositivePressEvent: () {
-                        _bloc.cleanSweepCodeRecord();
-                        Navigator.pop(context);
-                      },
-                      negativeText: '取消',
-                      positiveText: '确定',
-                    );
+              children:[
+                SpeedDialChild(
+                    child: ImageIcon(
+                      AssetImage('assets/icon/icon_clean.png')
+                    ),
+                    backgroundColor: Color(0xFFED4014),
+                    onTap: () {
+                      showDialog(
+                        context: context,
+                        builder: (context) {
+                          return CommonMessageDialog(
+                            title: '清空确认',
+                            widget: Text('是否确认清空'),
+                            onCloseEvent: () {
+                              Navigator.pop(context);
+                            },
+                            onPositivePressEvent: () {
+                              _bloc.cleanSweepCodeRecord();
+                              Navigator.pop(context);
+                            },
+                            negativeText: '取消',
+                            positiveText: '确定',
+                          );
+                        }
+                      );
+                    }
+                ),
+                SpeedDialChild(
+                  child: ImageIcon(
+                    AssetImage('assets/icon/icon_upload.png')
+                  ),
+                  backgroundColor: Color(0xFF19BE6B),
+                  onTap: () {
+                    _bloc.uploadData(widget.type, sanpshop.data);
                   }
-                );
-              }
-          ),
-          SpeedDialChild(
-              child: ImageIcon(
-                AssetImage('assets/icon/icon_upload.png')
-              ),
-              backgroundColor: Color(0xFF19BE6B),
-              onTap: () {
-                _bloc.uploadData(widget.type, _loginPageBloc.user.username);
-              }
-          ),
-        ]
+                ),
+              ]
+            );
+          }
+        },
       ),
       resizeToAvoidBottomPadding: false,
     );

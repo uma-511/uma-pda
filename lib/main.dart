@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_uma/blocs/bloc_provider.dart';
 import 'package:flutter_uma/blocs/init_page_bloc.dart';
 import 'package:flutter_uma/blocs/login_page_bloc.dart';
+import 'package:flutter_uma/blocs/setting_drawer_page_bloc.dart';
 import 'package:flutter_uma/blocs/sweep_code_page_bloc.dart';
 import 'package:flutter_uma/blocs/sweep_code_page_detail_bloc.dart';
 import 'package:flutter_uma/blocs/system_setting_page_bloc.dart';
@@ -19,7 +20,10 @@ void main() => runApp(
           bloc: SweepCodePageBloc(),
           child: BlocProvider(
             bloc: SweepCodePageDetailBloc(),
-            child: MyApp(),
+            child: BlocProvider(
+              bloc: SettingDrawerPageBloc(), 
+              child: MyApp()
+            )
           )
         ),
       )
