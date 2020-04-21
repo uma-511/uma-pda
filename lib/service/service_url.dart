@@ -1,7 +1,8 @@
 const servicePath = {
-  'handheldInit': '/api/handheld/handheldInit',// handheldInit
-  'getLabelMsg': '/api/handheld/getLabelMsg',  // 获取标签信息
-  'uploadData': '/api/handheld/uploadData',    // 上传标签数据
-  'getConfigs': '/api/handheld/getConfigs',    // 获取配置信息
-  'handsetlogin': '/auth/handsetlogin',        // 手持机登录
+  'handheldInit': '/umaApi/handheldInit',         /// handheldInit
+  'handsetlogin': '/umaApi/login',                /// 手持机登录
+  'getPersonInfo': '/umaApi/getPersonInfo',       /// 获取用户信息
+  'postLabelRecord': '/umaApi/postLabelRecord',   /// 车间入仓、车间返仓    
+  'deliveryList': '/umaApi/deliveryList',         /// 出货单号+客户名称
+  'delivery': '/umaApi/delivery',                 /// 出仓
 };

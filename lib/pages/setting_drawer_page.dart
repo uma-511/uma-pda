@@ -78,6 +78,7 @@ class SettingDrawerPage extends StatelessWidget {
                           children: <Widget>[
                             TextField(
                               controller: _settingPasswordController,
+                              obscureText: true,
                               decoration: InputDecoration(
                                 icon: ImageIcon(AssetImage('assets/icon/icon_password.png'), color: Colors.blue),
                                 hintText: '请输入密码'

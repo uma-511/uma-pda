@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_uma/pages/setting_drawer_page.dart';
+import 'package:flutter_uma/pages/sweep/sweep_code_delivery_page.dart';
 import 'package:flutter_uma/pages/sweep/sweep_code_page.dart';
 import 'package:hidden_drawer_menu/hidden_drawer/hidden_drawer_menu.dart';
 
@@ -28,10 +29,9 @@ class HomePage extends StatelessWidget {
               spacing: 10.0,
               runSpacing: 10.0,
               children: <Widget>[
-                _buildContainerButtom(context, 'assets/icon/icon_warehousing.png', '入仓', false, 1),
-                _buildContainerButtom(context, 'assets/icon/icon_out_of_warehouse.png', '出仓', true, 2),
-                _buildContainerButtom(context, 'assets/icon/icon_returning_warehouse.png', '返仓', true, 4),
-                _buildContainerButtom(context, 'assets/icon/icon_return_goods.png', '退货', false, 5)
+                _buildContainerButtom(context, 'assets/icon/icon_warehousing.png', '车间入仓', false, 'storage_of_workshop'),
+                _buildContainerButtom(context, 'assets/icon/icon_out_of_warehouse.png', '车间出仓', true, 'workshop_depot'),
+                _buildContainerButtom(context, 'assets/icon/icon_returning_warehouse.png', '返仓', true, 'returning_warehouse'),
               ],
             ),
           ),
@@ -41,11 +41,15 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  _buildContainerButtom(BuildContext context, String path, String title, bool isThickening, int type) {
+  _buildContainerButtom(BuildContext context, String path, String title, bool isThickening, String type) {
     return InkWell(
       highlightColor: Colors.blue[50],
       onTap: () {
-        Navigator.push(context, CupertinoPageRoute(builder: (context) => SweepCodePage(title, type)));
+        if (type == 'workshop_depot') {
+          Navigator.push(context, CupertinoPageRoute(builder: (context) => SweepCodeDeliveryPage(title, type)));
+        } else {
+          Navigator.push(context, CupertinoPageRoute(builder: (context) => SweepCodePage(title, type)));
+        }
       },
       child: Container(
         alignment: Alignment.center,

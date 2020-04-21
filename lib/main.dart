@@ -4,7 +4,6 @@ import 'package:flutter_uma/blocs/init_page_bloc.dart';
 import 'package:flutter_uma/blocs/login_page_bloc.dart';
 import 'package:flutter_uma/blocs/setting_drawer_page_bloc.dart';
 import 'package:flutter_uma/blocs/sweep_code_page_bloc.dart';
-import 'package:flutter_uma/blocs/sweep_code_page_detail_bloc.dart';
 import 'package:flutter_uma/blocs/system_setting_page_bloc.dart';
 import 'package:flutter_uma/pages/init_page.dart';
 import 'package:oktoast/oktoast.dart';
@@ -19,11 +18,8 @@ void main() => runApp(
         child: BlocProvider(
           bloc: SweepCodePageBloc(),
           child: BlocProvider(
-            bloc: SweepCodePageDetailBloc(),
-            child: BlocProvider(
-              bloc: SettingDrawerPageBloc(), 
-              child: MyApp()
-            )
+            bloc: SettingDrawerPageBloc(), 
+            child: MyApp()
           )
         ),
       )

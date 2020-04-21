@@ -1,242 +1,146 @@
 import 'dart:convert';
-
-import 'package:common_utils/common_utils.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_uma/blocs/bloc_provider.dart';
 import 'package:flutter_uma/common/common_preference_keys.dart';
 import 'package:flutter_uma/common/common_preference_utils.dart';
+import 'package:flutter_uma/common/common_utils.dart';
 import 'package:flutter_uma/service/http_util.dart';
-import 'package:flutter_uma/vo/commen_vo.dart';
-import 'package:flutter_uma/vo/label_msg_vo.dart';
-import 'package:flutter_uma/vo/sweep_code_vo.dart';
+import 'package:flutter_uma/vo/cache_vo.dart';
+import 'package:flutter_uma/vo/delivery_list_vo.dart';
+import 'package:flutter_uma/vo/post_label_record_vo.dart';
 import 'package:oktoast/oktoast.dart';
 import 'package:rxdart/rxdart.dart';
 
 class SweepCodePageBloc extends BlocBase {
 
-  /// 获取标签信息
-  getLabelMsg(String labelNumber, int status, TextEditingController _textEditingController) async {
-    bool labelNumberIsExist = _getSweepCodeIsExist(labelNumber);
-    if (labelNumberIsExist) {
-      _textEditingController.text = '';
-      showToast('请勿重复扫描');
-    } else {
-      var formData = {
-        'labelNumber': labelNumber,
-        'status': status
-      };
-      await HttpUtil().post('getLabelMsg', data: formData).then((val) {
-        _textEditingController.text = '';
-        if (val != null) {
-          LabelMsgVo labelMsgVo = LabelMsgVo.fromJson(val);
-          if (labelMsgVo.code == '200') {
-            _saveLabelMsg(labelMsgVo.data);
-          } else {
-            showToast(labelMsgVo.message);
-          }
-        } else {
-          showToast('获取标签信息异常');
-        }
-      });
-    }
-  }
+  BehaviorSubject<DeliveryListVo> _deliveryListVoController = BehaviorSubject<DeliveryListVo>();
+  Sink<DeliveryListVo> get _deliveryListVoSink => _deliveryListVoController.sink;
+  Stream<DeliveryListVo> get deliveryListVoStream => _deliveryListVoController.stream;
 
-  /// 上传标签信息
-  uploadData(int status, String scanUser) async {
-    SweepCodeVo _sweepCodeVo = _sweepCodeVoStr == '{}' ? SweepCodeVo(generalization: [], labelList: []) : SweepCodeVo.fromJson(jsonDecode(_sweepCodeVoStr));
-    List<Map<String, dynamic>> labelList = [];
-    _sweepCodeVo.labelList.forEach((item) {
-      labelList.add({
-        'labelNumber': '${item.labelNumber}',
-        'scanTime': '${item.scanTime}'
+  /// 车间入仓、返仓
+  postLabelRecord(String orderNo, String type, TextEditingController textEditingController) async {
+    await getToken().then((token) async {
+      var data = {
+        'orderNo': orderNo,
+        'type': type
+      };
+      await HttpUtil(token: token).post('postLabelRecord', data: data).then((val) {
+        PostLabelRecordVo postLabelRecordVo = PostLabelRecordVo.fromJson(val);
+        if (postLabelRecordVo.code == '200') {
+          showToast('上传成功');
+          _saveLabelMsg(postLabelRecordVo.data);
+        } else {
+          showToast(postLabelRecordVo.message);
+        }
       });
     });
-    if (labelList.length == 0) {
-      showToast('请扫描标签');
-      return;
-    }
-    var formData = {
-      'labelList': labelList,
-      'scanUser': scanUser,
-      'status': status
-    };
-    await HttpUtil().post('uploadData', data: formData).then((val) {
-      if (null != val) {
-        CommonVo commonVo = CommonVo.fromJson(val);
-        if (commonVo.code == '200') {
-          showToast('数据上传成功');
-          cleanSweepCodeRecord();
-        } else {
-          showToast(commonVo.message);
-        }
+    textEditingController.text = '';
+  }
+
+  /// 获取客户列表
+  deliveryList() async {
+    await HttpUtil().post('deliveryList').then((val) {
+      DeliveryListVo deliveryListVo = DeliveryListVo.fromJson(val);
+      if (deliveryListVo.code == '200') {
+        _deliveryListVoSink.add(deliveryListVo);
       } else {
-        showToast('数据上传异常');
+        showToast(deliveryListVo.message);
       }
     });
   }
 
-  /// -----------------------------------------------------------------------------------------
-  SweepCodeVo _sweepCodeVo;
-  String _sweepCodeVoStr = '{}';
-  BehaviorSubject<SweepCodeVo> _sweepCodeVoController = BehaviorSubject<SweepCodeVo>();
-  Sink<SweepCodeVo> get _sweepCodeVoSink => _sweepCodeVoController.sink;
-  Stream<SweepCodeVo> get sweepCodeVoStream => _sweepCodeVoController.stream;
-
-  String _sweepCodeVokey;
-  /// 初始化缓存key
-  initSweepCodeVokey(int type) {
-    _sweepCodeVokey = CommonPerferenceKeys.sweepCodeVokey;
-    _sweepCodeVokey = '$_sweepCodeVokey'+'_$type';
-  }
-  /// 获取缓存标签信息
-  getSweepCodeVo() {
-    CommonPreferenceUtils().getString(key: _sweepCodeVokey, defaultValue: '{}').then((val) {
-      _sweepCodeVoStr = val;
-      _sweepCodeVo = _sweepCodeVoStr == '{}' ? SweepCodeVo(labelList: [], generalization: []) : SweepCodeVo.fromJson(jsonDecode(_sweepCodeVoStr));
-      _sweepCodeVoSink.add(_sweepCodeVo);
-    });
-  }
-
-  /// 保存标签缓存信息
-  _saveLabelMsg(LabelMsgData labelMsgData) {
-    bool _included = false; // 此型号是否存在
-    bool _isRepeatedScanning = false; // 此标签是否存在
-    int _removeIndex = 0;
-
-    LabeInfoVo _labeInfoVo = _getLabeInfoVo(
-                                labelMsgData.chemicalFiberLabelInfoVo.labelNumber,
-                                labelMsgData.chemicalFiberLabelInfoVo.factPerBagNumber,
-                                labelMsgData.chemicalFiberLabelInfoVo.netWeight,
-                                labelMsgData.chemicalFiberLabelInfoVo.tare,
-                                labelMsgData.chemicalFiberLabelInfoVo.grossWeight
-                              );
-
-    for (int i = 0; i < _sweepCodeVo.generalization.length; i++) {
-      if (_sweepCodeVo.generalization[i].prodModel == labelMsgData.chemicalFiberProductionInfoVo.prodModel) {
-        _included = true;
-        _removeIndex = i;
-        _sweepCodeVo.generalization[i].labeInfoVo.forEach((labelItem) {
-          if (labelItem.labelNumber == labelMsgData.chemicalFiberLabelInfoVo.labelNumber) {
-            _isRepeatedScanning = true;
-            return;
+  /// 车间出仓
+  delivery(String deliveryNum, String orderNo, TextEditingController textEditingController) async {
+    if (deliveryNum != '') {
+      await getToken().then((token) async {
+        var data = {
+          'deliveryNum': deliveryNum,
+          'orderNo': orderNo
+        };
+        await HttpUtil(token: token).post('delivery', data: data).then((val) {
+          PostLabelRecordVo postLabelRecordVo = PostLabelRecordVo.fromJson(val);
+          if (postLabelRecordVo.code == '200') {
+            showToast('上传成功');
+            _saveLabelMsg(postLabelRecordVo.data);
+          } else {
+            showToast(postLabelRecordVo.message);
           }
         });
-        if (!_isRepeatedScanning) {
-          _sweepCodeVo.generalization[i].labeInfoVo.insert(0,
-             _labeInfoVo
-          );
-        }
-      }
-    }
-
-    // 新增缓存信息
-    if (!_included) {
-      _sweepCodeVo.generalization.insert(
-        0, 
-        Generalization(
-          prodModel: labelMsgData.chemicalFiberProductionInfoVo.prodModel,
-          prodName: labelMsgData.chemicalFiberProductionInfoVo.prodName,
-          prodColor: labelMsgData.chemicalFiberProductionInfoVo.prodColor,
-          prodFineness: labelMsgData.chemicalFiberProductionInfoVo.prodFineness,
-          labeInfoVo: [
-            _labeInfoVo
-          ]
-        )
-      );
+      });
     } else {
-      Generalization _generalization = _sweepCodeVo.generalization[_removeIndex];
-      _sweepCodeVo.generalization.removeAt(_removeIndex);
-      _sweepCodeVo.generalization.insert(0, _generalization);
+      showToast('请选择客户');
     }
-
-    if (_isRepeatedScanning) {
-      showToast('请勿重复扫描');
-    } else {
-      showToast('扫描成功');
-      _sweepCodeVo.labelList.insert(
-        0, 
-        LabelList(labelNumber: _labeInfoVo.labelNumber, scanTime: _labeInfoVo.scanTime)
-      );
-      _notifyChanges(_sweepCodeVo);
-    }
+    textEditingController.text = '';
   }
 
-  /// 生成LabeInfoVo
-  LabeInfoVo _getLabeInfoVo(labelNumber, factPerBagNumber, netWeight, tare, grossWeight) {
-    return LabeInfoVo(
-      labelNumber: labelNumber,
-      factPerBagNumber: factPerBagNumber,
-      netWeight: netWeight,
-      tare: tare,
-      grossWeight: grossWeight,
-      scanTime: DateUtil.getNowDateMs()
-    );
+  ///---------------------------------------------------------------------------------------------------
+  String _cacheVokey;
+  List<CacheVo> _cacheVo;
+  String _cacheVoStr = '[]';
+  BehaviorSubject<List<CacheVo>> _cacheVoController = BehaviorSubject<List<CacheVo>>();
+  Sink<List<CacheVo>> get _cacheVoSink => _cacheVoController.sink;
+  Stream<List<CacheVo>> get cacheVoStream => _cacheVoController.stream;
+
+  /// 初始化缓存key
+  initSweepCodeVokey(String type) {
+    _cacheVokey = CommonPerferenceKeys.sweepCodeVokey;
+    _cacheVokey = '$_cacheVokey'+'_$type';
+  }
+
+  /// 获取缓存标签信息
+  getSweepCodeVo() {
+    CommonPreferenceUtils().getString(key: _cacheVokey, defaultValue: '[]').then((val) {
+      _cacheVoStr = val;
+      _cacheVo = _cacheVoStr == '[]' ? [] : CacheVo.fromJsonList(jsonDecode(_cacheVoStr));
+      _cacheVoSink.add(_cacheVo);
+    });
+  }
+
+  /// 保存上传成功的标签信息
+  _saveLabelMsg(PostLabelRecordData postLabelRecordData) {
+    /// 此 hash 是否存在
+    bool _hashExiste = false;
+    /// 当hash 存在时，记录存在的下标
+    int _hashExisteIndex = 0;
+    /// 临时下标
+    int _tempIndex = 0;
+    _cacheVo.forEach((item) {
+      if (postLabelRecordData.hash == item.hash) {
+        _hashExiste = true;
+        _hashExisteIndex = _tempIndex;
+      }
+      _tempIndex++;
+    });
+
+    if (_hashExiste) {
+      _cacheVo[_hashExisteIndex].recordList.add(postLabelRecordData);
+    } else {
+      _cacheVo.add(CacheVo(
+          hash: postLabelRecordData.hash,
+          recordList: [postLabelRecordData]
+        ));
+    }
+    _notifyChanges(_cacheVo);
   }
 
   /// 更新缓存
-  _notifyChanges(SweepCodeVo sweepCodeVo) {
-    _sweepCodeVoStr = json.encode(sweepCodeVo);
-    CommonPreferenceUtils().saveString(key: _sweepCodeVokey, value: _sweepCodeVoStr);
-    _sweepCodeVo = SweepCodeVo();
-    _sweepCodeVo = sweepCodeVo == null ? SweepCodeVo() : sweepCodeVo;
-    _sweepCodeVoSink.add(_sweepCodeVo);
+  _notifyChanges(List<CacheVo> cacheVos) {
+    _cacheVoStr = json.encode(cacheVos);
+    CommonPreferenceUtils().saveString(key: _cacheVokey, value: _cacheVoStr);
+    _cacheVo = [];
+    _cacheVo = cacheVos == null ? [] : cacheVos;
+    _cacheVoSink.add(_cacheVo);
   }
 
   /// 清空缓存
-  cleanSweepCodeRecord() {
-    _notifyChanges(SweepCodeVo(generalization: [], labelList: []));
-  }
-
-  /// 获取扫描单号是否存在
-  bool _getSweepCodeIsExist(String labelNumber) {
-    bool _labelNumberIsExis = false;
-    SweepCodeVo _sweepCodeVo = _sweepCodeVoStr == '{}' ? SweepCodeVo(generalization: [], labelList: []) : SweepCodeVo.fromJson(jsonDecode(_sweepCodeVoStr));
-    _sweepCodeVo.labelList.forEach((item) {
-      if (labelNumber == item.labelNumber) {
-        _labelNumberIsExis = true;
-        return;
-      }
-    });
-    return _labelNumberIsExis;
-  }
-
-  /// 根据标签号删除
-  deleteLabelByLabelNumber(String labelNumber) {
-    SweepCodeVo _sweepCodeVo = _sweepCodeVoStr == '{}' ? SweepCodeVo(generalization: [], labelList: []) : SweepCodeVo.fromJson(jsonDecode(_sweepCodeVoStr));
-    List<LabelList> _labelList = [];
-    _sweepCodeVo.labelList.forEach((item) {
-      if (item.labelNumber != labelNumber) {
-        _labelList.add(item);
-      }
-    });
-
-    List<Generalization> _generalization = [];
-    _sweepCodeVo.generalization.forEach((item) {
-      Generalization _tempGeneralization = item;
-      if (item.labeInfoVo.length > 1) {
-        List<LabeInfoVo> labeInfoVo = [];
-        item.labeInfoVo.forEach((labeInfoVoItem) {
-          if (labeInfoVoItem.labelNumber != labelNumber) {
-            labeInfoVo.add(labeInfoVoItem);
-          }
-        });
-        _tempGeneralization.labeInfoVo = labeInfoVo;
-        _generalization.add(_tempGeneralization);
-      } else {
-        item.labeInfoVo.forEach((labeInfoVoItem) {
-          if (labeInfoVoItem.labelNumber != labelNumber) {
-            _generalization.add(_tempGeneralization);
-          }
-        });
-      }
-    });
-
-    SweepCodeVo _temp = SweepCodeVo(labelList: _labelList, generalization: _generalization);
-    _notifyChanges(_temp);
+  cleanCacheVo() {
+    _notifyChanges([]);
+    showToast('清空成功');
   }
 
   @override
   void dispose() {
-    _sweepCodeVoController.close();
+    _cacheVoController.close();
+    _deliveryListVoController.close();
   }
 }

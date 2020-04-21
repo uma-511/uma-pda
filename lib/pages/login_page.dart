@@ -32,6 +32,7 @@ class _LoginPageState extends State<LoginPage> {
             ),
             TextField(
               controller: _passwordController,
+              obscureText: true,
               decoration: InputDecoration(
                 icon: ImageIcon(AssetImage('assets/icon/icon_password.png'), color: Colors.blue),
                 hintText: '请输入密码'
