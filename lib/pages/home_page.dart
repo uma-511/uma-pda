@@ -28,10 +28,11 @@ class HomePage extends StatelessWidget {
               spacing: 10.0,
               runSpacing: 10.0,
               children: <Widget>[
-                _buildContainerButtom(context, 'assets/icon/icon_warehousing.png', '入仓', false, 1),
-                _buildContainerButtom(context, 'assets/icon/icon_out_of_warehouse.png', '出仓', true, 2),
-                _buildContainerButtom(context, 'assets/icon/icon_returning_warehouse.png', '返仓', true, 4),
-                _buildContainerButtom(context, 'assets/icon/icon_return_goods.png', '退货', false, 5)
+                _buildContainerButtom(context, 'assets/icon/icon_warehousing.png', '入仓', false, () => Navigator.push(context, CupertinoPageRoute(builder: (context) => SweepCodePage('入仓', 1, true)))),
+                _buildContainerButtom(context, 'assets/icon/icon_out_of_warehouse.png', '出仓', true, () => Navigator.push(context, CupertinoPageRoute(builder: (context) => SweepCodePage('出仓', 2, true)))),
+                _buildContainerButtom(context, 'assets/icon/icon_returning_warehouse.png', '返仓', true, () => Navigator.push(context, CupertinoPageRoute(builder: (context) => SweepCodePage('返仓', 4, true)))),
+                // _buildContainerButtom(context, 'assets/icon/icon_return_goods.png', '退货', false, () => Navigator.push(context, CupertinoPageRoute(builder: (context) => SweepCodePage('退货', 5, true)))),
+                _buildContainerButtom(context, 'assets/icon/icon_return_goods.png', '标题未定', false, () => _buildShowBottomSheet(context))
               ],
             ),
           ),
@@ -41,12 +42,10 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  _buildContainerButtom(BuildContext context, String path, String title, bool isThickening, int type) {
+  _buildContainerButtom(BuildContext context, String path, String title, bool isThickening, itemFun()) {
     return InkWell(
       highlightColor: Colors.blue[50],
-      onTap: () {
-        Navigator.push(context, CupertinoPageRoute(builder: (context) => SweepCodePage(title, type)));
-      },
+      onTap: itemFun == null ? null : () => itemFun(),
       child: Container(
         alignment: Alignment.center,
         width: ScreenUtil().setWidth(300),
@@ -75,5 +74,36 @@ class HomePage extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  _buildShowBottomSheet(BuildContext context) {
+    print('测试');
+    showModalBottomSheet(
+      context: context, 
+      builder: (_) {
+        return Container(
+          height: ScreenUtil().setHeight(300),
+          child: Column(
+            children: <Widget>[
+              ListTile(
+                leading: Icon(Icons.add),
+                title: Text('添加'),
+                onTap: () {
+                  Navigator.pop(context);
+                  Navigator.push(context, CupertinoPageRoute(builder: (context) => SweepCodePage('标题未定true', 7, true)));
+                }, 
+              ),
+              ListTile(
+                leading: Icon(Icons.delete_forever),
+                title: Text('减少'),
+                onTap: () {
+                  Navigator.pop(context);
+                  Navigator.push(context, CupertinoPageRoute(builder: (context) => SweepCodePage('标题未定false', 7, false)));
+                }, 
+              )
+            ],
+          ),
+        );
+      });
   }
 }

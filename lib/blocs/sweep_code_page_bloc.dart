@@ -15,15 +15,27 @@ import 'package:rxdart/rxdart.dart';
 class SweepCodePageBloc extends BlocBase {
 
   /// 获取标签信息
-  getLabelMsg(String labelNumber, int status, TextEditingController _textEditingController) async {
+  getLabelMsg(String labelNumber, int status, TextEditingController _textEditingController, bool isAdd, TextEditingController scanNumberEditingController) async {
     bool labelNumberIsExist = _getSweepCodeIsExist(labelNumber);
+    bool isCheckLabel = true;
+    if (status == 7 && !isAdd && scanNumberEditingController.text == '') {
+      showToast('请输入出库单号');
+      _textEditingController.text = '';
+      return;
+    }
+    if (status == 7 && !isAdd) {
+      isCheckLabel = false;
+    }
+
     if (labelNumberIsExist) {
       _textEditingController.text = '';
       showToast('请勿重复扫描');
     } else {
       var formData = {
         'labelNumber': labelNumber,
-        'status': status
+        'status': status,
+        'scanNumber': scanNumberEditingController.text,
+        'isCheckLabel': isCheckLabel
       };
       await HttpUtil().post('getLabelMsg', data: formData).then((val) {
         _textEditingController.text = '';
@@ -42,7 +54,7 @@ class SweepCodePageBloc extends BlocBase {
   }
 
   /// 上传标签信息
-  uploadData(int status, String scanUser) async {
+  uploadData(int status, String scanUser, TextEditingController scanNumberEditingController, bool isAdd) async {
     SweepCodeVo _sweepCodeVo = _sweepCodeVoStr == '{}' ? SweepCodeVo(generalization: [], labelList: []) : SweepCodeVo.fromJson(jsonDecode(_sweepCodeVoStr));
     List<Map<String, dynamic>> labelList = [];
     _sweepCodeVo.labelList.forEach((item) {
@@ -55,10 +67,18 @@ class SweepCodePageBloc extends BlocBase {
       showToast('请扫描标签');
       return;
     }
+    bool isCheckLabel = true;
+    if (status == 7 && !isAdd) {
+      isCheckLabel = false;
+    }
+    
     var formData = {
       'labelList': labelList,
       'scanUser': scanUser,
-      'status': status
+      'status': status,
+      'scanNumber': scanNumberEditingController.text,
+      'isAdd': isAdd,
+      'isCheckLabel': isCheckLabel
     };
     await HttpUtil().post('uploadData', data: formData).then((val) {
       if (null != val) {
@@ -74,6 +94,7 @@ class SweepCodePageBloc extends BlocBase {
       }
     });
   }
+  
 
   /// -----------------------------------------------------------------------------------------
   SweepCodeVo _sweepCodeVo;
@@ -84,9 +105,9 @@ class SweepCodePageBloc extends BlocBase {
 
   String _sweepCodeVokey;
   /// 初始化缓存key
-  initSweepCodeVokey(int type) {
+  initSweepCodeVokey(int type, bool isAdd) {
     _sweepCodeVokey = CommonPerferenceKeys.sweepCodeVokey;
-    _sweepCodeVokey = '$_sweepCodeVokey'+'_$type';
+    _sweepCodeVokey = '$_sweepCodeVokey'+'_$type'+'_$isAdd';
   }
   /// 获取缓存标签信息
   getSweepCodeVo() {

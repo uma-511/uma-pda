@@ -11,12 +11,14 @@ import 'package:flutter_uma/common/common_show_loading.dart';
 import 'package:flutter_uma/common/common_utils.dart';
 import 'package:flutter_uma/pages/sweep/sweep_code_page_detail.dart';
 import 'package:flutter_uma/vo/sweep_code_vo.dart';
+import 'package:oktoast/oktoast.dart';
 
 class SweepCodePage extends StatefulWidget {
   final String title;
   /// 0：待入库 1：入库 2：出库 3：作废 4：退库 5：退货
   final int type;
-  SweepCodePage(this.title, this.type);
+  final bool isAdd;
+  SweepCodePage(this.title, this.type, this.isAdd);
   @override
   _SweepCodePageState createState() => _SweepCodePageState();
 }
@@ -24,6 +26,7 @@ class SweepCodePage extends StatefulWidget {
 class _SweepCodePageState extends State<SweepCodePage> with TickerProviderStateMixin {
   TabController _controller;
   TextEditingController _textEditingController;
+  TextEditingController _scanNumberEditingController;
   SweepCodePageBloc _bloc;
   SettingDrawerPageBloc _settingDrawerPageBloc;
   @override
@@ -36,14 +39,15 @@ class _SweepCodePageState extends State<SweepCodePage> with TickerProviderStateM
       vsync: this
     );
     _textEditingController = TextEditingController();
+    _scanNumberEditingController = TextEditingController();
     _textEditingController.addListener(() async {
       getLabelLength().then((labelLength) {
         if (_textEditingController.text.length == labelLength) {
-          _bloc.getLabelMsg(_textEditingController.text, widget.type, _textEditingController);
+          _bloc.getLabelMsg(_textEditingController.text, widget.type, _textEditingController, widget.isAdd, _scanNumberEditingController);
         }
       });      
     });
-    _bloc.initSweepCodeVokey(widget.type);
+    _bloc.initSweepCodeVokey(widget.type, widget.isAdd);
     _bloc.getSweepCodeVo();
     _settingDrawerPageBloc.getUserName();
     super.initState();
@@ -57,6 +61,21 @@ class _SweepCodePageState extends State<SweepCodePage> with TickerProviderStateM
       ),
       body: Column(
         children: <Widget>[
+          widget.type == 7 ? 
+            Container(
+              padding: EdgeInsets.all(10.0),
+              child: TextField(
+                autofocus: true,
+                controller: _scanNumberEditingController,
+                decoration: InputDecoration(
+                  icon: ImageIcon(
+                    AssetImage('assets/icon/icon_return_goods.png'),
+                    color: Colors.blue,
+                  )
+                ),
+              ),
+            ) : 
+            Container(),
           Container(
             padding: EdgeInsets.all(10.0),
             child: TextField(
@@ -160,7 +179,15 @@ class _SweepCodePageState extends State<SweepCodePage> with TickerProviderStateM
                   ),
                   backgroundColor: Color(0xFF19BE6B),
                   onTap: () {
-                    _bloc.uploadData(widget.type, sanpshop.data);
+                    if (widget.type == 7) {
+                      if (_scanNumberEditingController.text == '') {
+                        showToast('请输入出库单号');
+                      } else {
+                        _bloc.uploadData(widget.type, sanpshop.data, _scanNumberEditingController, widget.isAdd);
+                      }
+                    } else {
+                      _bloc.uploadData(widget.type, sanpshop.data, _scanNumberEditingController, widget.isAdd);
+                    }
                   }
                 ),
               ]
