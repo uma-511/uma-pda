@@ -35,12 +35,12 @@ class SweepCodePageCommon extends StatelessWidget {
                   Container(
                     alignment: Alignment.center,
                     height: ScreenUtil().setHeight(100),
-                    child: Text('概括'),
+                    child: Text('汇总'),
                   ),
                   Container(
                     alignment: Alignment.center,
                     height: ScreenUtil().setHeight(100),
-                    child: Text('汇总'),
+                    child: Text('概括'),
                   )
                 ],
               ),
@@ -49,8 +49,8 @@ class SweepCodePageCommon extends StatelessWidget {
               child: TabBarView(
                 controller: _controller,
                 children: <Widget>[
-                  SweepCodePageGeneralization(_bloc),
                   SweepCodePageSummary(_bloc),
+                  SweepCodePageGeneralization(_bloc),
                 ],
               ),
             )

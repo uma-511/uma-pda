@@ -111,38 +111,45 @@ class _SweepCodeDeliveryPageState extends State<SweepCodeDeliveryPage> with Tick
 
   /// 客户选择器
   Widget _buildSelectedCustomer() {
-  return StreamBuilder(
-    stream: _bloc.deliveryListVoStream,
-    builder: (context, sanpshop) {
-      if (!sanpshop.hasData) {
-        return Container();
-      } else {
-        DeliveryListVo deliveryListVo = sanpshop.data;
-        _tempCustomer = '${deliveryListVo.data[_customerSelectedIndex].customer}--${deliveryListVo.data[_customerSelectedIndex].deliveryNum}';
-        _tempDeliveryNum = '${deliveryListVo.data[_customerSelectedIndex].deliveryNum}';
-        return Container(
-          alignment: Alignment.centerLeft,
-          height: ScreenUtil().setHeight(450),
-          child: SingleChildScrollView(
-            child: SelectGroup<int>(
-              index: _customerSelectedIndex,
-              direction: SelectDirection.vertical,
-              space: EdgeInsets.all(10),
-              selectColor: Colors.blue,
-              items: deliveryListVo.data.map((item) {
-                return SelectItem(label: '${item.customer}--${item.deliveryNum}', value: 0);
-              }).toList(),
-              onSingleSelect: (int index){
-                _customerSelectedIndex = index;
-                _tempCustomer = '${deliveryListVo.data[index].customer}--${deliveryListVo.data[index].deliveryNum}';
-                _tempDeliveryNum = '${deliveryListVo.data[index].deliveryNum}';
-                Navigator.pop(context);
-              },
+    return StreamBuilder(
+      stream: _bloc.deliveryListVoStream,
+      builder: (context, sanpshop) {
+        if (!sanpshop.hasData) {
+          return Container();
+        } else {
+          DeliveryListVo deliveryListVo = sanpshop.data;
+          _tempCustomer = '${deliveryListVo.data[_customerSelectedIndex].customer}--${deliveryListVo.data[_customerSelectedIndex].deliveryNum}';
+          _tempDeliveryNum = '${deliveryListVo.data[_customerSelectedIndex].deliveryNum}';
+          return Container(
+            alignment: Alignment.centerLeft,
+            height: ScreenUtil().setHeight(450),
+            child: SingleChildScrollView(
+              child: SelectGroup<int>(
+                index: _customerSelectedIndex,
+                direction: SelectDirection.vertical,
+                space: EdgeInsets.all(10),
+                selectColor: Colors.blue,
+                items: deliveryListVo.data.map((item) {
+                  return SelectItem(label: '${item.customer}--${item.deliveryNum}', value: item.id);
+                }).toList(),
+                onSingleSelect: (int value){
+                  int _tempIndex = 0;
+                  deliveryListVo.data.forEach((item) {
+                    if (value == item.id) {
+                      _customerSelectedIndex = _tempIndex;
+                      _tempCustomer = '${item.customer}--${item.deliveryNum}';
+                      _tempDeliveryNum = '${item.deliveryNum}';
+                    }
+                    _tempIndex++;
+                  });
+                  Navigator.pop(context);
+                },
+              ),
             ),
-          ),
-        );
+          );
+        }
       }
-    });
+    );
   }
 
   @override

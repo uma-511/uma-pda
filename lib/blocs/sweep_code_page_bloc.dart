@@ -17,6 +17,16 @@ class SweepCodePageBloc extends BlocBase {
   Sink<DeliveryListVo> get _deliveryListVoSink => _deliveryListVoController.sink;
   Stream<DeliveryListVo> get deliveryListVoStream => _deliveryListVoController.stream;
 
+  /// 插入方式：true 在头部插入，false 在最后添加
+  bool _sort = false;
+  BehaviorSubject<bool> _sortController = BehaviorSubject<bool>();
+  Sink<bool> get _sortSink => _sortController.sink;
+  Stream<bool> get sortStream => _sortController.stream;
+  setSort() {
+    _sort = !_sort;
+    _sortSink.add(_sort);
+  }
+
   /// 车间入仓、返仓
   postLabelRecord(String orderNo, String type, TextEditingController textEditingController) async {
     await getToken().then((token) async {
@@ -113,12 +123,19 @@ class SweepCodePageBloc extends BlocBase {
     });
 
     if (_hashExiste) {
-      _cacheVo[_hashExisteIndex].recordList.add(postLabelRecordData);
+      _sort ? 
+        _cacheVo[_hashExisteIndex].recordList.insert(0, postLabelRecordData) :
+        _cacheVo[_hashExisteIndex].recordList.add(postLabelRecordData);
     } else {
-      _cacheVo.add(CacheVo(
-          hash: postLabelRecordData.hash,
-          recordList: [postLabelRecordData]
-        ));
+      _sort ? 
+        _cacheVo.insert(0, CacheVo(
+            hash: postLabelRecordData.hash,
+            recordList: [postLabelRecordData]
+          )) :
+        _cacheVo.add(CacheVo(
+            hash: postLabelRecordData.hash,
+            recordList: [postLabelRecordData]
+          )); 
     }
     _notifyChanges(_cacheVo);
   }
@@ -142,5 +159,6 @@ class SweepCodePageBloc extends BlocBase {
   void dispose() {
     _cacheVoController.close();
     _deliveryListVoController.close();
+    _sortController.close();
   }
 }

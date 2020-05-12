@@ -30,18 +30,21 @@ class DeliveryListVo {
 class DeliveryList {
   String deliveryNum;
   String customer;
+  int id;
 
   DeliveryList({this.deliveryNum, this.customer});
 
   DeliveryList.fromJson(Map<String, dynamic> json) {
     deliveryNum = json['deliveryNum'];
     customer = json['customer'];
+    id = json['id'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['deliveryNum'] = this.deliveryNum;
     data['customer'] = this.customer;
+    data['id'] = this.id;
     return data;
   }
 }

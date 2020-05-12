@@ -44,15 +44,24 @@ class SweepCodePageGeneralization extends StatelessWidget {
                       Row(
                         children: <Widget>[
                           SizedBox(
-                            child: Text('名称：${_cacheVos[index].recordList[0].name}'),
+                            child: Text(
+                                '${_cacheVos[index].recordList[0].name}',
+                                overflow: TextOverflow.ellipsis,
+                              ),
                             width: ScreenUtil().setWidth(250),
                           ),
                           SizedBox(
-                            child: Text('颜色：${_cacheVos[index].recordList[0].color}'),
+                            child: Text(
+                              '${_cacheVos[index].recordList[0].color}',
+                              overflow: TextOverflow.ellipsis,
+                              ),
                             width: ScreenUtil().setWidth(250),
                           ),
                           SizedBox(
-                            child: Text('编号：${_cacheVos[index].recordList[0].number}'),
+                            child: Text(
+                              '${_cacheVos[index].recordList[0].number}',
+                              overflow: TextOverflow.ellipsis,
+                              ),
                             width: ScreenUtil().setWidth(250),
                           )
                         ]
@@ -60,15 +69,24 @@ class SweepCodePageGeneralization extends StatelessWidget {
                       Row(
                         children: <Widget>[
                           SizedBox(
-                            child: Text('宽度：${_cacheVos[index].recordList[0].width}'),
+                            child: Text(
+                              '${_cacheVos[index].recordList[0].width}',
+                              overflow: TextOverflow.ellipsis,
+                            ),
                             width: ScreenUtil().setWidth(250),
                           ),
                           SizedBox(
-                            child: Text('包数：${_cacheVos[index].recordList.length}'),
+                            child: Text(
+                              '包数：${_cacheVos[index].recordList.length}',
+                              overflow: TextOverflow.ellipsis,
+                            ),
                             width: ScreenUtil().setWidth(250),
                           ),
                           SizedBox(
-                            child: Text('卷数：$quantity'),
+                            child: Text(
+                              '卷数：$quantity',
+                              overflow: TextOverflow.ellipsis,
+                            ),
                             width: ScreenUtil().setWidth(250),
                           )
                         ]

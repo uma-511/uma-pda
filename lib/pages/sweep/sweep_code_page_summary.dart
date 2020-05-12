@@ -53,11 +53,17 @@ class SweepCodePageSummary extends StatelessWidget {
                               Row(
                                 children: <Widget>[
                                   SizedBox(
-                                    child: Text('条码：${item.labelNum}'),
+                                    child: Text(
+                                      '条码：${item.labelNum}',
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
                                     width: ScreenUtil().setWidth(500),
                                   ),
                                   SizedBox(
-                                    child: Text('编号：${item.number}'),
+                                    child: Text(
+                                      '${item.number}',
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
                                     width: ScreenUtil().setWidth(250),
                                   )
                                 ]
@@ -65,15 +71,24 @@ class SweepCodePageSummary extends StatelessWidget {
                               Row(
                                 children: <Widget>[
                                   SizedBox(
-                                    child: Text('名称：${item.name}'),
+                                    child: Text(
+                                      '${item.name}',
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
                                     width: ScreenUtil().setWidth(250),
                                   ),
                                   SizedBox(
-                                    child: Text('颜色：${item.color}'),
+                                    child: Text(
+                                      '${item.color}',
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
                                     width: ScreenUtil().setWidth(250),
                                   ),
                                   SizedBox(
-                                    child: Text('宽度：${item.width}'),
+                                    child: Text(
+                                      '${item.width}',
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
                                     width: ScreenUtil().setWidth(250),
                                   )
                                 ]

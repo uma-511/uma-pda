@@ -52,6 +52,21 @@ class SweepCodePageFloatingActionButton extends StatelessWidget {
                     );
                   }
               ),
+              SpeedDialChild(
+                child: StreamBuilder(
+                  initialData: true,
+                  stream: _bloc.sortStream,
+                  builder: (context, sanpshop) {
+                    return Container(
+                      alignment: Alignment.center,
+                      child: Text(sanpshop.data ? '反序' : '正序'),
+                    );
+                  }
+                ),
+                onTap: () {
+                  _bloc.setSort();
+                }
+              )
             ]
           );
         }
