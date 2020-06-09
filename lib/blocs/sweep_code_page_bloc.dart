@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:audioplayers/audio_cache.dart';
 import 'package:common_utils/common_utils.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_uma/blocs/bloc_provider.dart';
@@ -30,20 +31,24 @@ class SweepCodePageBloc extends BlocBase {
     if (labelNumberIsExist) {
       _textEditingController.text = '';
       showToast('请勿重复扫描');
+      palyVideo(false);
     } else {
       var formData = {
         'labelNumber': labelNumber,
         'status': status,
         'scanNumber': scanNumberEditingController.text,
-        'isCheckLabel': isCheckLabel
+        'isCheckLabel': isCheckLabel,
+        'isAdd': isAdd
       };
       await HttpUtil().post('getLabelMsg', data: formData).then((val) {
         _textEditingController.text = '';
         if (val != null) {
           LabelMsgVo labelMsgVo = LabelMsgVo.fromJson(val);
           if (labelMsgVo.code == '200') {
+            palyVideo(true);
             _saveLabelMsg(labelMsgVo.data);
           } else {
+            palyVideo(false);
             showToast(labelMsgVo.message);
           }
         } else {
@@ -53,8 +58,23 @@ class SweepCodePageBloc extends BlocBase {
     }
   }
 
+  /// 播放音频
+  palyVideo(bool isSuccess) async {
+    AudioCache audioCache = AudioCache(prefix: 'mp3/');
+    audioCache.play(isSuccess ? 'success.mp3' : 'error.mp3');
+  }
+
+  /// 是否上存中
+  BehaviorSubject<bool> _updateLoadingController = BehaviorSubject<bool>();
+  Sink<bool> get _updateLoadingSink => _updateLoadingController.sink;
+  Stream<bool> get updateLoadingStream => _updateLoadingController.stream;
+  setUpdateLoading(bool showLoading) {
+    _updateLoadingSink.add(showLoading);
+  }
+
   /// 上传标签信息
   uploadData(int status, String scanUser, TextEditingController scanNumberEditingController, bool isAdd) async {
+    setUpdateLoading(true);
     SweepCodeVo _sweepCodeVo = _sweepCodeVoStr == '{}' ? SweepCodeVo(generalization: [], labelList: []) : SweepCodeVo.fromJson(jsonDecode(_sweepCodeVoStr));
     List<Map<String, dynamic>> labelList = [];
     _sweepCodeVo.labelList.forEach((item) {
@@ -65,6 +85,7 @@ class SweepCodePageBloc extends BlocBase {
     });
     if (labelList.length == 0) {
       showToast('请扫描标签');
+      setUpdateLoading(false);
       return;
     }
     bool isCheckLabel = true;
@@ -92,6 +113,7 @@ class SweepCodePageBloc extends BlocBase {
       } else {
         showToast('数据上传异常');
       }
+      setUpdateLoading(false);
     });
   }
   
@@ -176,7 +198,12 @@ class SweepCodePageBloc extends BlocBase {
       showToast('扫描成功');
       _sweepCodeVo.labelList.insert(
         0, 
-        LabelList(labelNumber: _labeInfoVo.labelNumber, scanTime: _labeInfoVo.scanTime)
+        LabelList(
+          labelNumber: _labeInfoVo.labelNumber, 
+          scanTime: _labeInfoVo.scanTime, 
+          prodColor: labelMsgData.chemicalFiberProductionInfoVo.prodColor, 
+          prodFineness: labelMsgData.chemicalFiberProductionInfoVo.prodFineness
+        )
       );
       _notifyChanges(_sweepCodeVo);
     }
@@ -259,5 +286,6 @@ class SweepCodePageBloc extends BlocBase {
   @override
   void dispose() {
     _sweepCodeVoController.close();
+    _updateLoadingController.close();
   }
 }

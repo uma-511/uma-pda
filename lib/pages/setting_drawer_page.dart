@@ -150,7 +150,7 @@ class SettingDrawerPage extends StatelessWidget {
               ListTile(
                 leading: ImageIcon(AssetImage('assets/icon/icon_version.png'), color: Colors.grey[300]),
                 title: Text(
-                  '1.0.0',
+                  '1.0.1_QY',
                   style: TextStyle(
                     color: Colors.grey[300]
                   )

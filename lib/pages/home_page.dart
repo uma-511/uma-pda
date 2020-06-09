@@ -32,7 +32,7 @@ class HomePage extends StatelessWidget {
                 _buildContainerButtom(context, 'assets/icon/icon_out_of_warehouse.png', '出仓', true, () => Navigator.push(context, CupertinoPageRoute(builder: (context) => SweepCodePage('出仓', 2, true)))),
                 _buildContainerButtom(context, 'assets/icon/icon_returning_warehouse.png', '返仓', true, () => Navigator.push(context, CupertinoPageRoute(builder: (context) => SweepCodePage('返仓', 4, true)))),
                 // _buildContainerButtom(context, 'assets/icon/icon_return_goods.png', '退货', false, () => Navigator.push(context, CupertinoPageRoute(builder: (context) => SweepCodePage('退货', 5, true)))),
-                _buildContainerButtom(context, 'assets/icon/icon_return_goods.png', '标题未定', false, () => _buildShowBottomSheet(context))
+                _buildContainerButtom(context, 'assets/icon/icon_return_goods.png', '出仓调整', false, () => _buildShowBottomSheet(context))
               ],
             ),
           ),
@@ -90,7 +90,7 @@ class HomePage extends StatelessWidget {
                 title: Text('添加'),
                 onTap: () {
                   Navigator.pop(context);
-                  Navigator.push(context, CupertinoPageRoute(builder: (context) => SweepCodePage('标题未定true', 7, true)));
+                  Navigator.push(context, CupertinoPageRoute(builder: (context) => SweepCodePage('出仓调整·添加', 7, true)));
                 }, 
               ),
               ListTile(
@@ -98,7 +98,7 @@ class HomePage extends StatelessWidget {
                 title: Text('减少'),
                 onTap: () {
                   Navigator.pop(context);
-                  Navigator.push(context, CupertinoPageRoute(builder: (context) => SweepCodePage('标题未定false', 7, false)));
+                  Navigator.push(context, CupertinoPageRoute(builder: (context) => SweepCodePage('出仓调整·减少', 7, false)));
                 }, 
               )
             ],

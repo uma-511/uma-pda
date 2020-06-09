@@ -26,9 +26,9 @@ class HttpUtil {
       //请求基地址,可以包含子路径
       baseUrl: "http://192.168.1.110:8000" ,
       //连接服务器超时时间，单位是毫秒.
-      connectTimeout: 100000,
+      connectTimeout: 150000,
       //响应流上前后两次接受到数据的间隔，单位为毫秒。
-      receiveTimeout: 5000,
+      receiveTimeout: 600000,
       //Http请求头.
       headers: {
         //do something

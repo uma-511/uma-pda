@@ -112,18 +112,22 @@ class LabeInfoVo {
 class LabelList {
   String labelNumber;
   int scanTime;
+  String prodColor;
+  String prodFineness;
 
-  LabelList({this.labelNumber, this.scanTime});
+  LabelList({this.labelNumber, this.scanTime, this.prodColor, this.prodFineness});
 
   LabelList.fromJson(Map<String, dynamic> json) {
     labelNumber = json['labelNumber'];
     scanTime = json['scanTime'];
+    prodColor = json['prodColor'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['labelNumber'] = this.labelNumber;
     data['scanTime'] = this.scanTime;
+    data['prodFineness'] = this.prodFineness;
     return data;
   }
 }
