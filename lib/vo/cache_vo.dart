@@ -26,9 +26,9 @@ class CacheVo {
   }
 
   static List<CacheVo> fromJsonList(dynamic maps) {
-    List<CacheVo> list = List(maps.length);
+    List<CacheVo> list = [];
     for (int i = 0; i < maps.length; i++) {
-      list[i] = CacheVo.fromJson(maps[i]);
+      list.add(CacheVo.fromJson(maps[i]));
     }
     return list;
   }

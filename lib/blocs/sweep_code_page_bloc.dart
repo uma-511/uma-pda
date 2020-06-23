@@ -121,20 +121,21 @@ class SweepCodePageBloc extends BlocBase {
       }
       _tempIndex++;
     });
-
     if (_hashExiste) {
       _sort ? 
         _cacheVo[_hashExisteIndex].recordList.insert(0, postLabelRecordData) :
         _cacheVo[_hashExisteIndex].recordList.add(postLabelRecordData);
     } else {
+      List<PostLabelRecordData> tempList = [];
+      tempList.add(postLabelRecordData);
       _sort ? 
         _cacheVo.insert(0, CacheVo(
             hash: postLabelRecordData.hash,
-            recordList: [postLabelRecordData]
+            recordList: tempList
           )) :
         _cacheVo.add(CacheVo(
             hash: postLabelRecordData.hash,
-            recordList: [postLabelRecordData]
+            recordList: tempList
           )); 
     }
     _notifyChanges(_cacheVo);
