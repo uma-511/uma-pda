@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:audioplayers/audio_cache.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_uma/blocs/bloc_provider.dart';
 import 'package:flutter_uma/common/common_preference_keys.dart';
@@ -39,12 +40,20 @@ class SweepCodePageBloc extends BlocBase {
         if (postLabelRecordVo.code == '200') {
           showToast('上传成功');
           _saveLabelMsg(postLabelRecordVo.data);
+          palyVideo(true);
         } else {
           showToast(postLabelRecordVo.message);
+          palyVideo(false);
         }
       });
     });
     textEditingController.text = '';
+  }
+
+  /// 播放音频
+  palyVideo(bool isSuccess) async {
+    AudioCache audioCache = AudioCache(prefix: 'mp3/');
+    audioCache.play(isSuccess ? 'success.mp3' : 'error.mp3');
   }
 
   /// 获取客户列表

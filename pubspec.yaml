@@ -31,6 +31,7 @@ dependencies:
   dio: ^2.1.13
   cookie_jar: ^1.0.1
   flutter_sujian_select: ^1.0.1
+  audioplayers: ^0.15.1
 
 
 dev_dependencies:
