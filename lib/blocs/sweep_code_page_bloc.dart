@@ -19,14 +19,14 @@ class SweepCodePageBloc extends BlocBase {
   Stream<DeliveryListVo> get deliveryListVoStream => _deliveryListVoController.stream;
 
   /// 插入方式：true 在头部插入，false 在最后添加
-  bool _sort = false;
-  BehaviorSubject<bool> _sortController = BehaviorSubject<bool>();
-  Sink<bool> get _sortSink => _sortController.sink;
-  Stream<bool> get sortStream => _sortController.stream;
-  setSort() {
-    _sort = !_sort;
-    _sortSink.add(_sort);
-  }
+  // bool _sort = false;
+  // BehaviorSubject<bool> _sortController = BehaviorSubject<bool>();
+  // Sink<bool> get _sortSink => _sortController.sink;
+  // Stream<bool> get sortStream => _sortController.stream;
+  // setSort() {
+  //   _sort = !_sort;
+  //   _sortSink.add(_sort);
+  // }
 
   /// 车间入仓、返仓
   postLabelRecord(String orderNo, String type, TextEditingController textEditingController) async {
@@ -100,6 +100,12 @@ class SweepCodePageBloc extends BlocBase {
   Sink<List<CacheVo>> get _cacheVoSink => _cacheVoController.sink;
   Stream<List<CacheVo>> get cacheVoStream => _cacheVoController.stream;
 
+  /// 标签列表
+  List<PostLabelRecordData> _postLabelRecordData = [];
+  BehaviorSubject<List<PostLabelRecordData>> _postLabelRecordDataController = BehaviorSubject<List<PostLabelRecordData>>();
+  Sink<List<PostLabelRecordData>> get _postLabelRecordDataSink => _postLabelRecordDataController.sink;
+  Stream<List<PostLabelRecordData>> get postLabelRecordDataStream => _postLabelRecordDataController.stream;
+
   /// 初始化缓存key
   initSweepCodeVokey(String type) {
     _cacheVokey = CommonPerferenceKeys.sweepCodeVokey;
@@ -112,6 +118,13 @@ class SweepCodePageBloc extends BlocBase {
       _cacheVoStr = val;
       _cacheVo = _cacheVoStr == '[]' ? [] : CacheVo.fromJsonList(jsonDecode(_cacheVoStr));
       _cacheVoSink.add(_cacheVo);
+      _postLabelRecordData = [];
+      _cacheVo.forEach((item) {
+        item.recordList.forEach((recordListItem) {
+          _postLabelRecordData.add(recordListItem);
+        });
+      });
+      _postLabelRecordDataSink.add(_postLabelRecordData);
     });
   }
 
@@ -131,22 +144,29 @@ class SweepCodePageBloc extends BlocBase {
       _tempIndex++;
     });
     if (_hashExiste) {
-      _sort ? 
-        _cacheVo[_hashExisteIndex].recordList.insert(0, postLabelRecordData) :
-        _cacheVo[_hashExisteIndex].recordList.add(postLabelRecordData);
+      // _sort ? 
+      //   _cacheVo[_hashExisteIndex].recordList.insert(0, postLabelRecordData) :
+      //   _cacheVo[_hashExisteIndex].recordList.add(postLabelRecordData);
+      _cacheVo[_hashExisteIndex].recordList.insert(0, postLabelRecordData);
     } else {
       List<PostLabelRecordData> tempList = [];
       tempList.add(postLabelRecordData);
-      _sort ? 
-        _cacheVo.insert(0, CacheVo(
-            hash: postLabelRecordData.hash,
-            recordList: tempList
-          )) :
-        _cacheVo.add(CacheVo(
-            hash: postLabelRecordData.hash,
-            recordList: tempList
-          )); 
+      // _sort ? 
+      //   _cacheVo.insert(0, CacheVo(
+      //       hash: postLabelRecordData.hash,
+      //       recordList: tempList
+      //     )) :
+      //   _cacheVo.add(CacheVo(
+      //       hash: postLabelRecordData.hash,
+      //       recordList: tempList
+      //     )); 
+      _cacheVo.insert(0, CacheVo(
+        hash: postLabelRecordData.hash,
+        recordList: tempList
+      ));
     }
+    _postLabelRecordData.insert(0, postLabelRecordData);
+    _postLabelRecordDataSink.add(_postLabelRecordData);
     _notifyChanges(_cacheVo);
   }
 
@@ -162,6 +182,8 @@ class SweepCodePageBloc extends BlocBase {
   /// 清空缓存
   cleanCacheVo() {
     _notifyChanges([]);
+    _postLabelRecordData = [];
+    _postLabelRecordDataSink.add(_postLabelRecordData);
     showToast('清空成功');
   }
 
@@ -169,6 +191,7 @@ class SweepCodePageBloc extends BlocBase {
   void dispose() {
     _cacheVoController.close();
     _deliveryListVoController.close();
-    _sortController.close();
+    _postLabelRecordDataController.close();
+    // _sortController.close();
   }
 }

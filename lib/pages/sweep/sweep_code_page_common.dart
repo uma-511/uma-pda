@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_uma/blocs/sweep_code_page_bloc.dart';
 import 'package:flutter_uma/pages/sweep/sweep_code_page_generalization.dart';
 import 'package:flutter_uma/pages/sweep/sweep_code_page_summary.dart';
+import 'package:flutter_uma/vo/cache_vo.dart';
 
 class SweepCodePageCommon extends StatelessWidget {
   final TabController _controller;
@@ -32,10 +33,28 @@ class SweepCodePageCommon extends StatelessWidget {
                 labelColor: Colors.blue,
                 unselectedLabelColor: Colors.black,
                 tabs: <Widget>[
-                  Container(
-                    alignment: Alignment.center,
-                    height: ScreenUtil().setHeight(100),
-                    child: Text('汇总'),
+                  StreamBuilder(
+                    stream: _bloc.cacheVoStream,
+                    builder: (context, sanpshop) {
+                      if (sanpshop.hasData) {
+                        List<CacheVo> cacheVo = sanpshop.data;
+                        int sumCount = 0;
+                        cacheVo.forEach((item) {
+                          sumCount += item.recordList.length;
+                        });
+                        return Container(
+                          alignment: Alignment.center,
+                          height: ScreenUtil().setHeight(100),
+                          child: Text('汇总($sumCount)'),
+                        );
+                      } else {
+                        return Container(
+                          alignment: Alignment.center,
+                          height: ScreenUtil().setHeight(100),
+                          child: Text('汇总'),
+                        );
+                      }
+                    },
                   ),
                   Container(
                     alignment: Alignment.center,

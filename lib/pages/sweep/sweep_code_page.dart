@@ -21,6 +21,7 @@ class _SweepCodePageState extends State<SweepCodePage> with TickerProviderStateM
   TextEditingController _textEditingController;
   SweepCodePageBloc _bloc;
   SettingDrawerPageBloc _settingDrawerPageBloc;
+  int _labelLength = 0;
   @override
   void initState() {
     _bloc = BlocProvider.of<SweepCodePageBloc>(context);
@@ -33,6 +34,7 @@ class _SweepCodePageState extends State<SweepCodePage> with TickerProviderStateM
     _textEditingController = TextEditingController();
     _textEditingController.addListener(() async {
       getLabelLength().then((labelLength) {
+        _labelLength = labelLength;
         if (_textEditingController.text.length == labelLength) {
           _bloc.postLabelRecord(_textEditingController.text, widget.type, _textEditingController);
         }
@@ -56,12 +58,14 @@ class _SweepCodePageState extends State<SweepCodePage> with TickerProviderStateM
             padding: EdgeInsets.all(10.0),
             child: TextField(
               autofocus: true,
+              maxLength: _labelLength,
               controller: _textEditingController,
               decoration: InputDecoration(
                 icon: ImageIcon(
                   AssetImage('assets/icon/icon_bar_code.png'),
                   color: Colors.blue,
-                )
+                ),
+                counterText: ''
               ),
             ),
           ),
