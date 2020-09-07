@@ -46,7 +46,9 @@ class SweepCodePageBloc extends BlocBase {
           LabelMsgVo labelMsgVo = LabelMsgVo.fromJson(val);
           if (labelMsgVo.code == '200') {
             palyVideo(true);
-            _saveLabelMsg(labelMsgVo.data);
+            for (LabelMsgData data in labelMsgVo.data) {
+              _saveLabelMsg(data);
+            }
           } else {
             palyVideo(false);
             showToast(labelMsgVo.message);

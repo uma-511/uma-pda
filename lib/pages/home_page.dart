@@ -29,6 +29,7 @@ class HomePage extends StatelessWidget {
               runSpacing: 10.0,
               children: <Widget>[
                 _buildContainerButtom(context, 'assets/icon/icon_warehousing.png', '入仓', false, () => Navigator.push(context, CupertinoPageRoute(builder: (context) => SweepCodePage('入仓', 1, true)))),
+                _buildContainerButtom(context, 'assets/icon/icon_warehousing.png', '托板入仓', false, () => Navigator.push(context, CupertinoPageRoute(builder: (context) => SweepCodePage('托板入仓', 9, true)))),
                 _buildContainerButtom(context, 'assets/icon/icon_out_of_warehouse.png', '出仓', true, () => Navigator.push(context, CupertinoPageRoute(builder: (context) => SweepCodePage('出仓', 2, true)))),
                 _buildContainerButtom(context, 'assets/icon/icon_returning_warehouse.png', '返仓', true, () => Navigator.push(context, CupertinoPageRoute(builder: (context) => SweepCodePage('返仓', 4, true)))),
                 // _buildContainerButtom(context, 'assets/icon/icon_return_goods.png', '退货', false, () => Navigator.push(context, CupertinoPageRoute(builder: (context) => SweepCodePage('退货', 5, true)))),

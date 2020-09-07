@@ -1,26 +1,68 @@
 class LabelMsgVo {
   String code;
   String message;
-  LabelMsgData data;
+  List<LabelMsgData> data;
 
   LabelMsgVo({this.code, this.message, this.data});
 
   LabelMsgVo.fromJson(Map<String, dynamic> json) {
     code = json['code'];
     message = json['message'];
-    data = json['data'] != null ? new LabelMsgData.fromJson(json['data']) : null;
+    //data = json['data'] != null ? new LabelMsgData.fromJson(json['data']) : null;
+    if (json['data'] != null) {
+      data = new List<LabelMsgData>();
+      json['data'].forEach((v) {
+        data.add(new LabelMsgData.fromJson(v));
+      });
+    }
+    //data = json['data'] != null ? new LabelMsgData.fromJson(json['data']) : null;
+    //data = json['data'] != null ? new chemicalFiberHandheld.fromJson(json['data']) : null;
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['code'] = this.code;
     data['message'] = this.message;
-    if (this.data != null) {
+    /*if (this.data != null) {
       data['data'] = this.data.toJson();
+    }*/
+    if (this.data != null) {
+      data['data'] = this.data.map((v) => v.toJson()).toList();
     }
     return data;
   }
 }
+/*
+class chemicalFiberHandheld {
+
+
+
+  chemicalFiberHandheld({this.chemicalFiberLabelInfoVo, this.chemicalFiberProductionInfoVo});
+
+  chemicalFiberHandheld.fromJson(Map<String, dynamic> json) {
+    chemicalFiberLabelInfoVo = json['chemicalFiberLabelInfoVo'] != null
+        ? new ChemicalFiberLabelInfoVo.fromJson(
+        json['chemicalFiberLabelInfoVo'])
+        : null;
+    chemicalFiberProductionInfoVo =
+    json['chemicalFiberProductionInfoVo'] != null
+        ? new ChemicalFiberProductionInfoVo.fromJson(
+        json['chemicalFiberProductionInfoVo'])
+        : null;
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    if (this.chemicalFiberLabelInfoVo != null) {
+      data['chemicalFiberLabelInfoVo'] = this.chemicalFiberLabelInfoVo.toJson();
+    }
+    if (this.chemicalFiberProductionInfoVo != null) {
+      data['chemicalFiberProductionInfoVo'] =
+          this.chemicalFiberProductionInfoVo.toJson();
+    }
+    return data;
+  }
+}*/
 
 class LabelMsgData {
   ChemicalFiberLabelInfoVo chemicalFiberLabelInfoVo;

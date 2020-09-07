@@ -48,6 +48,7 @@ class _SweepCodePageState extends State<SweepCodePage> with TickerProviderStateM
         }
       });      
     });
+    /*_textEditingController = TextEditingController.fromValue(TextEditingValue(text : "100"));*/
     _bloc.initSweepCodeVokey(widget.type, widget.isAdd);
     _bloc.getSweepCodeVo();
     _settingDrawerPageBloc.getUserName();
@@ -62,7 +63,7 @@ class _SweepCodePageState extends State<SweepCodePage> with TickerProviderStateM
       appBar: AppBar(
         title: Text(widget.title),
         actions: <Widget>[
-          
+
           IconButton(
             icon: ImageIcon(
               AssetImage('assets/icon/icon_fun.png'),
