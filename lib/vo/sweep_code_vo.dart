@@ -121,12 +121,14 @@ class LabelList {
     labelNumber = json['labelNumber'];
     scanTime = json['scanTime'];
     prodColor = json['prodColor'];
+    prodFineness = json['prodFineness'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['labelNumber'] = this.labelNumber;
     data['scanTime'] = this.scanTime;
+    data['prodColor'] = this.prodColor;
     data['prodFineness'] = this.prodFineness;
     return data;
   }
