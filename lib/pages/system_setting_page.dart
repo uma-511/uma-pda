@@ -12,6 +12,7 @@ class SystemSettingPage extends StatefulWidget {
 class _SystemSettingPageState extends State<SystemSettingPage> {
   final TextEditingController _ipController = TextEditingController();
   final TextEditingController _labelController = TextEditingController();
+  final TextEditingController _listSizeController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -48,6 +49,15 @@ class _SystemSettingPageState extends State<SystemSettingPage> {
                     ),
                     keyboardType: TextInputType.number,
                   ),
+                  TextField(
+                    controller: _listSizeController,
+                    decoration: InputDecoration(
+                      helperText: map['listSize'] == null ? '未设置' : map['listSize'],
+                      hintText: '请输入列表最大输入值',
+                      icon: ImageIcon(AssetImage('assets/icon/icon_label.png'), color: Colors.blue),
+                    ),
+                    keyboardType: TextInputType.number,
+                  ),
                   SizedBox(height: ScreenUtil().setHeight(50)),
                   InkWell(
                     child: Container(
@@ -72,7 +82,7 @@ class _SystemSettingPageState extends State<SystemSettingPage> {
                           return CommonShowLoading();
                         }
                       );
-                      _bloc.saveIPAndLabelLength(context, _ipController.text, _labelController.text);
+                      _bloc.saveIPAndLabelLength(context, _ipController.text, _labelController.text, _listSizeController.text);
                     },
                   )
                 ],

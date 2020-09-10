@@ -8,6 +8,9 @@ class CommonPerferenceKeys {
   /// label 长度
   static final String labelKey = 'LABEL_KEY';
 
+  /// label 长度
+  static final String listKey = 'LIST_KEY';
+
   /// token
   static final String token = 'TOKEN_KEY';
 

@@ -213,22 +213,29 @@ class _SweepCodePageState extends State<SweepCodePage> with TickerProviderStateM
                               Container(
                                 alignment: Alignment.center,
                                 height: ScreenUtil().setHeight(100),
-                                child: Text('汇总'),
+                                  child: StreamBuilder(
+                                    stream: _bloc.sweepCodeVoStream,
+                                    builder: (context, sanpshop) {
+                                      if (!sanpshop.hasData) {
+                                        return Text('明细（0）');
+                                      } else {
+                                        SweepCodeVo _sweepCodeVo = sanpshop.data;
+                                        /*_textEditingController.addListener(() async {
+                                          getListSize().then((listSize) {
+                                            if (_sweepCodeVo.labelList.length == listSize) {
+                                              return showToast('已超过最大列表长度');
+                                            }
+                                          });
+                                        });*/
+                                        return Text('明细（${_sweepCodeVo.labelList.length} ）');
+                                      }
+                                    },
+                                  )
                               ),
                               Container(
                                 alignment: Alignment.center,
                                 height: ScreenUtil().setHeight(100),
-                                child: StreamBuilder(
-                                  stream: _bloc.sweepCodeVoStream,
-                                  builder: (context, sanpshop) {
-                                    if (!sanpshop.hasData) {
-                                      return Text('明细（0）');
-                                    } else {
-                                      SweepCodeVo _sweepCodeVo = sanpshop.data;
-                                      return Text('明细（${_sweepCodeVo.labelList.length} ）');
-                                    }                                    
-                                  },
-                                )
+                                child: Text('汇总'),
                               )
                             ],
                           ),
@@ -237,8 +244,8 @@ class _SweepCodePageState extends State<SweepCodePage> with TickerProviderStateM
                           child: TabBarView(
                             controller: _controller,
                             children: <Widget>[
-                              _buildGeneralization(),
                               _buildSummary(),
+                              _buildGeneralization(),
                             ],
                           ),
                         )

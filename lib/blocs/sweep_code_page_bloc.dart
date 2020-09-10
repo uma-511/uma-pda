@@ -11,6 +11,7 @@ import 'package:flutter_uma/vo/commen_vo.dart';
 import 'package:flutter_uma/vo/label_msg_vo.dart';
 import 'package:flutter_uma/vo/sweep_code_vo.dart';
 import 'package:oktoast/oktoast.dart';
+import 'package:flutter_uma/common/common_utils.dart';
 import 'package:rxdart/rxdart.dart';
 
 class SweepCodePageBloc extends BlocBase {
@@ -18,6 +19,7 @@ class SweepCodePageBloc extends BlocBase {
   /// 获取标签信息
   getLabelMsg(String labelNumber, int status, TextEditingController _textEditingController, bool isAdd, TextEditingController scanNumberEditingController) async {
     bool labelNumberIsExist = _getSweepCodeIsExist(labelNumber);
+    bool labelNumberIsList = _getSweepCodeIsList(labelNumber, _textEditingController);
     bool isCheckLabel = true;
     if (status == 7 && !isAdd && scanNumberEditingController.text == '') {
       showToast('请输入出库单号');
@@ -26,6 +28,11 @@ class SweepCodePageBloc extends BlocBase {
     }
     if (status == 7 && !isAdd) {
       isCheckLabel = false;
+    }
+
+    if (labelNumberIsList) {
+      showToast('超过规定列表长度');
+      return;
     }
 
     if (labelNumberIsExist) {
@@ -246,6 +253,20 @@ class SweepCodePageBloc extends BlocBase {
         _labelNumberIsExis = true;
         return;
       }
+    });
+    return _labelNumberIsExis;
+  }
+  /// 获取扫描单号是否存在
+  bool _getSweepCodeIsList(String labelNumber, TextEditingController _textEditingController)  {
+    bool _labelNumberIsExis = true;
+    SweepCodeVo _sweepCodeVo = _sweepCodeVoStr == '{}' ? SweepCodeVo(generalization: [], labelList: []) : SweepCodeVo.fromJson(jsonDecode(_sweepCodeVoStr));
+    _textEditingController.addListener(() async {
+      getListSize().then((listSize) {
+        if (listSize == listSize) {
+          _labelNumberIsExis = false;
+          return _labelNumberIsExis;
+        }
+      });
     });
     return _labelNumberIsExis;
   }

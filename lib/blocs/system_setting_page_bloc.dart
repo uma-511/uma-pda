@@ -16,7 +16,7 @@ class SystemSettingPageBloc extends BlocBase {
   Stream<Map<String, String>> get iPAndLabelLengthStream => _iPAndLabelLengthController.stream;
 
   /// 校验IP并保存IP与标签长度
-  saveIPAndLabelLength(BuildContext context, String ip, String labelLength) async {
+  saveIPAndLabelLength(BuildContext context, String ip, String labelLength, String listSize) async {
     if (ip.isEmpty) {
       showToast('请填写系统IP/链接');
       return;
@@ -27,9 +27,15 @@ class SystemSettingPageBloc extends BlocBase {
       return;
     }
 
+    if (listSize.isEmpty) {
+      showToast('请填写列表最大输入值');
+      return;
+    }
+
+
     bool checkIPEffective = await _checkIPEffective(ip);
     if (checkIPEffective) {
-      setIPAndLabelLength(ip, int.parse(labelLength));
+      setIPAndLabelLength(ip, int.parse(labelLength),int.parse(listSize));
       /// 检查登录状态
       String token = await getToken();
       if (token == null) {
@@ -48,9 +54,11 @@ class SystemSettingPageBloc extends BlocBase {
   getIPAndLabelLength() async {
     String ip = await getIP();
     int labelLength = await getLabelLength();
+    int listSize = await getListSize();
     Map<String, String> tempMap = Map();
     tempMap['ip'] = ip;
     tempMap['labelLength'] = labelLength.toString();
+    tempMap['listSize'] = listSize.toString();
     _iPAndLabelLengthSink.add(tempMap);
   }
 
