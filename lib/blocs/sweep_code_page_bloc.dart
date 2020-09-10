@@ -258,12 +258,12 @@ class SweepCodePageBloc extends BlocBase {
   }
   /// 获取扫描单号是否存在
   bool _getSweepCodeIsList(String labelNumber, TextEditingController _textEditingController)  {
-    bool _labelNumberIsExis = true;
+    bool _labelNumberIsExis = false;
     SweepCodeVo _sweepCodeVo = _sweepCodeVoStr == '{}' ? SweepCodeVo(generalization: [], labelList: []) : SweepCodeVo.fromJson(jsonDecode(_sweepCodeVoStr));
     _textEditingController.addListener(() async {
       getListSize().then((listSize) {
         if (listSize == listSize) {
-          _labelNumberIsExis = false;
+          _labelNumberIsExis = true;
           return _labelNumberIsExis;
         }
       });
