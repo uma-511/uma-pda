@@ -27,7 +27,15 @@ class SweepCodePageBloc extends BlocBase {
       _textEditingController.text = '';
       return;
     }
+    if (status == 10 && !isAdd && scanNumberEditingController.text == '') {
+      showToast('请输入出库单号');
+      _textEditingController.text = '';
+      return;
+    }
     if (status == 7 && !isAdd) {
+      isCheckLabel = false;
+    }
+    if (status == 10 && !isAdd) {
       isCheckLabel = false;
     }
 
@@ -61,6 +69,7 @@ class SweepCodePageBloc extends BlocBase {
           LabelMsgVo labelMsgVo = LabelMsgVo.fromJson(val);
           if (labelMsgVo.code == '200') {
             int isAdd = 0;
+            // 判断托板入库不能有多条不一样的信息
             for (LabelMsgData data in labelMsgVo.data) {
               SweepCodeVo _sweepCodeVo = _sweepCodeVoStr == '{}' ? SweepCodeVo(generalization: [], labelList: []) : SweepCodeVo.fromJson(jsonDecode(_sweepCodeVoStr));
               _sweepCodeVo.labelList.forEach((item) {
@@ -69,11 +78,13 @@ class SweepCodePageBloc extends BlocBase {
                   ++isAdd;
                 }
               });
-              if (_sweepCodeVo.labelList.length == isAdd) {
-                palyVideo(true);
-                _saveLabelMsg(data);
-              } else {
+              // 判断托板入库不能有多条不一样的信息
+              if (_sweepCodeVo.labelList.length != isAdd && status == 9 && status == 10) {
+                //palyVideo(true);
                 showToast('请确保产品唯一');
+
+              } else {
+                _saveLabelMsg(data);
               }
             }
           } else {
@@ -276,18 +287,7 @@ class SweepCodePageBloc extends BlocBase {
     });
     return _labelNumberIsExis;
   }
-/*
-  bool _getIsSweepCodeIsExist(String labelNumber) {
-    bool _labelNumberIsExis = false;
-    SweepCodeVo _sweepCodeVo = _sweepCodeVoStr == '{}' ? SweepCodeVo(generalization: [], labelList: []) : SweepCodeVo.fromJson(jsonDecode(_sweepCodeVoStr));
-    _sweepCodeVo.labelList.forEach((item) {
-      if (labelNumber != item.labelNumber) {
-        _labelNumberIsExis = true;
-        return;
-      }
-    });
-    return _labelNumberIsExis;
-  }*/
+
   /// 获取扫描单号是否存在
   bool _getSweepCodeIsList(String labelNumber, TextEditingController _textEditingController)  {
     bool _labelNumberIsExis = false;

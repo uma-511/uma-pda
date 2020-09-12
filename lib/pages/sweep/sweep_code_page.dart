@@ -158,7 +158,7 @@ class _SweepCodePageState extends State<SweepCodePage> with TickerProviderStateM
       ),
       body: Column(
         children: <Widget>[
-          widget.type == 7 ? 
+          widget.type == 7 || widget.type == 10?
             Container(
               padding: EdgeInsets.all(10.0),
               child: TextField(
