@@ -79,7 +79,7 @@ class SweepCodePageBloc extends BlocBase {
                 }
               });
               // 判断托板入库不能有多条不一样的信息
-              if (_sweepCodeVo.labelList.length != isAdd && status == 9 && status == 10) {
+              if (_sweepCodeVo.labelList.length != isAdd && status == 9 || status == 10) {
                 //palyVideo(true);
                 showToast('请确保产品唯一');
 
