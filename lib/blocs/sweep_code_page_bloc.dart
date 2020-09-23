@@ -20,7 +20,7 @@ class SweepCodePageBloc extends BlocBase {
   getLabelMsg(String labelNumber, int status, TextEditingController _textEditingController, bool isAdd, TextEditingController scanNumberEditingController) async {
     bool labelNumberIsExist = _getSweepCodeIsExist(labelNumber);
     /*bool islabelNumberIsList = _getIsSweepCodeIsExist(labelNumber);*/
-    bool labelNumberIsList = _getSweepCodeIsList(labelNumber, _textEditingController);
+    bool labelNumberIsList = _getSweepCodeIsList(labelNumber);
     bool isCheckLabel = true;
     if (status == 7 && !isAdd && scanNumberEditingController.text == '') {
       showToast('请输入出库单号');
@@ -69,6 +69,7 @@ class SweepCodePageBloc extends BlocBase {
           LabelMsgVo labelMsgVo = LabelMsgVo.fromJson(val);
           if (labelMsgVo.code == '200') {
             int isAdd = 0;
+            bool isAll = false;
             // 判断托板入库不能有多条不一样的信息
             for (LabelMsgData data in labelMsgVo.data) {
               SweepCodeVo _sweepCodeVo = _sweepCodeVoStr == '{}' ? SweepCodeVo(generalization: [], labelList: []) : SweepCodeVo.fromJson(jsonDecode(_sweepCodeVoStr));
@@ -80,16 +81,23 @@ class SweepCodePageBloc extends BlocBase {
               });
               // 判断托板入库不能有多条不一样的信息
               if (_sweepCodeVo.labelList.length != isAdd && status == 9) {
-                palyVideo(false);
+                isAll = false;
                 showToast('请确保产品唯一');
-
+                break;
               } else if (_sweepCodeVo.labelList.length != isAdd && status == 10) {
-                palyVideo(false);
+                isAll = false;
                 showToast('请确保产品唯一');
+                break;
               } else {
-                palyVideo(true);
+                isAll = true;
+                //palyVideo(true);
                 _saveLabelMsg(data);
               }
+            }
+            if (isAll) {
+              palyVideo(true);
+            } else {
+              palyVideo(false);
             }
           } else {
             palyVideo(false);
@@ -293,18 +301,19 @@ class SweepCodePageBloc extends BlocBase {
   }
 
   /// 获取扫描单号是否存在
-  bool _getSweepCodeIsList(String labelNumber, TextEditingController _textEditingController)  {
-    bool _labelNumberIsExis = false;
+  bool _getSweepCodeIsList(String labelNumber)  {
+    bool _labelNumberIs = false;
     SweepCodeVo _sweepCodeVo = _sweepCodeVoStr == '{}' ? SweepCodeVo(generalization: [], labelList: []) : SweepCodeVo.fromJson(jsonDecode(_sweepCodeVoStr));
-    _textEditingController.addListener(() async {
-      getListSize().then((listSize) {
-        if (listSize == _sweepCodeVo.labelList.length) {
-          _labelNumberIsExis = true;
-          return _labelNumberIsExis;
-        }
-      });
-    });
-    return _labelNumberIsExis;
+    /*getListSize().then((listSize) {*/
+      int k = _sweepCodeVo.labelList.length;
+      if (k >= 100) {
+        _labelNumberIs = true;
+        return _labelNumberIs;
+      } else {
+        return _labelNumberIs;
+      }
+   /* });*/
+
   }
 
   /// 根据标签号删除
