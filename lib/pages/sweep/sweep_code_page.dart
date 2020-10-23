@@ -46,7 +46,7 @@ class _SweepCodePageState extends State<SweepCodePage> with TickerProviderStateM
         if (_textEditingController.text.length == labelLength) {
           _bloc.getLabelMsg(_textEditingController.text, widget.type, _textEditingController, widget.isAdd, _scanNumberEditingController);
         }
-      });      
+      });
     });
     /*_textEditingController = TextEditingController.fromValue(TextEditingValue(text : "100"));*/
     _bloc.initSweepCodeVokey(widget.type, widget.isAdd);
@@ -68,7 +68,7 @@ class _SweepCodePageState extends State<SweepCodePage> with TickerProviderStateM
             icon: ImageIcon(
               AssetImage('assets/icon/icon_fun.png'),
               size: 42,
-            ), 
+            ),
             onPressed: () {
               showModalBottomSheet(context: context, builder: (context) {
                 return Stack(
@@ -171,7 +171,7 @@ class _SweepCodePageState extends State<SweepCodePage> with TickerProviderStateM
                   )
                 ),
               ),
-            ) : 
+            ) :
             Container(),
           Container(
             padding: EdgeInsets.all(10.0),
@@ -456,7 +456,10 @@ class _SweepCodePageState extends State<SweepCodePage> with TickerProviderStateM
                       title: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
-                          Text(_sweepCodeVo.labelList[index].labelNumber),
+                          Text(_sweepCodeVo.labelList[index].labelNumber,
+                              /*style:TextStyle(
+                              color:Colors.yellow // 文字颜色
+                          )*/),
                           Row(
                             children: <Widget>[
                               Text('色号: ${_sweepCodeVo.labelList[index].prodColor}'),

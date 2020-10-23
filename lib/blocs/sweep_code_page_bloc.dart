@@ -144,7 +144,7 @@ class SweepCodePageBloc extends BlocBase {
     if (status == 7 && !isAdd) {
       isCheckLabel = false;
     }
-    
+
     var formData = {
       'labelList': labelList,
       'scanUser': scanUser,
@@ -160,6 +160,9 @@ class SweepCodePageBloc extends BlocBase {
           showToast('数据上传成功');
           cleanSweepCodeRecord();
         } else {
+          String a = commonVo.message;
+          String b = a.substring(0,15);
+          deleteLabelByLabelNumber(b);
           showToast(commonVo.message);
         }
       } else {
@@ -168,7 +171,7 @@ class SweepCodePageBloc extends BlocBase {
       setUpdateLoading(false);
     });
   }
-  
+
 
   /// -----------------------------------------------------------------------------------------
   SweepCodeVo _sweepCodeVo;
@@ -227,7 +230,7 @@ class SweepCodePageBloc extends BlocBase {
     // 新增缓存信息
     if (!_included) {
       _sweepCodeVo.generalization.insert(
-        0, 
+        0,
         Generalization(
           prodModel: labelMsgData.chemicalFiberProductionInfoVo.prodModel,
           prodName: labelMsgData.chemicalFiberProductionInfoVo.prodName,
@@ -249,11 +252,11 @@ class SweepCodePageBloc extends BlocBase {
     } else {
       showToast('扫描成功');
       _sweepCodeVo.labelList.insert(
-        0, 
+        0,
         LabelList(
-          labelNumber: _labeInfoVo.labelNumber, 
-          scanTime: _labeInfoVo.scanTime, 
-          prodColor: labelMsgData.chemicalFiberProductionInfoVo.prodColor, 
+          labelNumber: _labeInfoVo.labelNumber,
+          scanTime: _labeInfoVo.scanTime,
+          prodColor: labelMsgData.chemicalFiberProductionInfoVo.prodColor,
           prodFineness: labelMsgData.chemicalFiberProductionInfoVo.prodFineness
         )
       );
@@ -304,7 +307,10 @@ class SweepCodePageBloc extends BlocBase {
   bool _getSweepCodeIsList(String labelNumber)  {
     bool _labelNumberIs = false;
     SweepCodeVo _sweepCodeVo = _sweepCodeVoStr == '{}' ? SweepCodeVo(generalization: [], labelList: []) : SweepCodeVo.fromJson(jsonDecode(_sweepCodeVoStr));
-    /*getListSize().then((listSize) {*/
+    getListSize().then((listSize) {
+       int a =  listSize;
+    });
+
       int k = _sweepCodeVo.labelList.length;
       if (k >= 100) {
         _labelNumberIs = true;
