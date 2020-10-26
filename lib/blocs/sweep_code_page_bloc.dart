@@ -163,6 +163,7 @@ class SweepCodePageBloc extends BlocBase {
           String a = commonVo.message;
           String b = a.substring(0,15);
           deleteLabelByLabelNumber(b);
+          errorSave(a, status);
           showToast(commonVo.message);
         }
       } else {
@@ -192,6 +193,19 @@ class SweepCodePageBloc extends BlocBase {
       _sweepCodeVoStr = val;
       _sweepCodeVo = _sweepCodeVoStr == '{}' ? SweepCodeVo(labelList: [], generalization: []) : SweepCodeVo.fromJson(jsonDecode(_sweepCodeVoStr));
       _sweepCodeVoSink.add(_sweepCodeVo);
+    });
+  }
+
+  errorSave(String a, int status) async {
+    String labelNumber = a.substring(0,15);
+    String labelError = a.substring(15);
+
+    var formDate = {
+      'labelError': labelError,
+      'labelNumber': labelNumber,
+      'labelStatus': status
+    };
+    await HttpUtil().post('errorTextSave', data: formDate).then((val) {
     });
   }
 

@@ -32,7 +32,7 @@ class LoginPageBloc extends BlocBase {
         CommonPreferenceUtils().saveString(key: CommonPerferenceKeys.userNameKey, value: handsetloginVo.data.user.username);
         Navigator.pushAndRemoveUntil(context, CupertinoPageRoute(builder: (context) => HomePage()), (route) => route == null);
       } else {
-        showToast('账号或密码错误');
+        showToast(handsetloginVo.message);
       }
     });
   }
@@ -41,5 +41,5 @@ class LoginPageBloc extends BlocBase {
   @override
   void dispose() {
   }
-  
+
 }

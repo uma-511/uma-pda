@@ -26,7 +26,6 @@ class InitPageBloc extends BlocBase {
     }
 
     /// 校验Token 是否有效(未完成)
-    
     Navigator.pushAndRemoveUntil(context, CupertinoPageRoute(builder: (context) => HomePage()), (route) => route == null);
   }
 

@@ -1,4 +1,10 @@
 import 'package:flutter_uma/common/common_preference_keys.dart';
+import 'package:flutter_uma/service/http_util.dart';
+import 'package:flutter_uma/pages/login_page.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:oktoast/oktoast.dart';
+import 'package:flutter_uma/vo/handsetlogin_vo.dart';
 import 'common_preference_utils.dart';
 
 /// 缓存IP，标签长度
@@ -34,6 +40,23 @@ import 'common_preference_utils.dart';
   }
 
   // 清空Token
-cleanToken() {
-  CommonPreferenceUtils().removeByKey(key: CommonPerferenceKeys.token);
-}
+  cleanToken()  {
+    CommonPreferenceUtils().removeByKey(key: CommonPerferenceKeys.token);
+  }
+
+  cleanTokens(BuildContext context) async {
+    String userName = await CommonPreferenceUtils().getString(key: CommonPerferenceKeys.userNameKey);
+    HttpUtil().post('delectlogin',data: userName).then((val) {
+      if (val != null) {
+        HandsetloginVo handsetloginVo = HandsetloginVo.fromJson(val);
+
+        if (handsetloginVo.code == '200') {
+          Navigator.pushAndRemoveUntil(context, CupertinoPageRoute(builder: (context) => LoginPage()), (route) => route == null);
+          CommonPreferenceUtils().removeByKey(key: CommonPerferenceKeys.token);
+          return;
+        }
+      } else {
+        showToast('网络错误无法退出登录');
+      }
+    });
+  }

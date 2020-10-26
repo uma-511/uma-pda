@@ -7,6 +7,7 @@ import 'package:flutter_uma/common/common_message_dialog.dart';
 import 'package:flutter_uma/common/common_utils.dart';
 import 'package:flutter_uma/pages/login_page.dart';
 import 'package:flutter_uma/pages/system_setting_page.dart';
+import 'package:flutter_uma/service/http_util.dart';
 import 'package:oktoast/oktoast.dart';
 
 class SettingDrawerPage extends StatelessWidget {
@@ -28,7 +29,7 @@ class SettingDrawerPage extends StatelessWidget {
               Container(
                 margin: EdgeInsets.only(top: ScreenUtil.statusBarHeight),
                 child: ImageIcon(
-                  AssetImage('assets/icon/icon_uma_logo.png'), 
+                  AssetImage('assets/icon/icon_uma_logo.png'),
                   color: Colors.orange,
                   size: 46,
                 )
@@ -49,7 +50,7 @@ class SettingDrawerPage extends StatelessWidget {
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: ScreenUtil().setSp(48)
-                          ),  
+                          ),
                         ),
                       );
                     } else {
@@ -100,7 +101,7 @@ class SettingDrawerPage extends StatelessWidget {
                                   ),
                                 ),
                               ),
-                              onTap: () {            
+                              onTap: () {
                                 if (_settingPasswordController.text == 'um_admin') {
                                   Navigator.pop(context);
                                   Navigator.push(context, CupertinoPageRoute(builder: (context) => SystemSettingPage()));
@@ -138,8 +139,7 @@ class SettingDrawerPage extends StatelessWidget {
                           Navigator.pop(context);
                         },
                         onPositivePressEvent: () {
-                          cleanToken();
-                          Navigator.pushAndRemoveUntil(context, CupertinoPageRoute(builder: (context) => LoginPage()), (route) => route == null);
+                          cleanTokens(context);
                         },
                       );
                     }
