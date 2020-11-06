@@ -134,11 +134,14 @@ class _SweepCodePageState extends State<SweepCodePage> with TickerProviderStateM
                                   onTap: () {
                                     if (widget.type == 7) {
                                       if (_scanNumberEditingController.text == '') {
+                                        Navigator.pop(context);
                                         showToast('请输入出库单号');
                                       } else {
+                                        Navigator.pop(context);
                                         _bloc.uploadData(widget.type, sanpshop.data, _scanNumberEditingController, widget.isAdd);
                                       }
                                     } else {
+                                      Navigator.pop(context);
                                       _bloc.uploadData(widget.type, sanpshop.data, _scanNumberEditingController, widget.isAdd);
                                     }
                                   }
