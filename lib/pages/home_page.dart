@@ -28,13 +28,13 @@ class HomePage extends StatelessWidget {
               spacing: 10.0,
               runSpacing: 10.0,
               children: <Widget>[
-                _buildContainerButtom(context, 'assets/icon/icon_warehousing.png', '入仓', false, () => Navigator.push(context, CupertinoPageRoute(builder: (context) => SweepCodePage('入仓', 1, true)))),
-                _buildContainerButtom(context, 'assets/icon/icon_warehousing.png', '托板入仓', false, () => Navigator.push(context, CupertinoPageRoute(builder: (context) => SweepCodePage('托板入仓', 9, true)))),
+                //_buildContainerButtom(context, 'assets/icon/icon_warehousing.png', '入仓', false, () => Navigator.push(context, CupertinoPageRoute(builder: (context) => SweepCodePage('入仓', 1, true)))),
+                //_buildContainerButtom(context, 'assets/icon/icon_warehousing.png', '托板入仓', false, () => Navigator.push(context, CupertinoPageRoute(builder: (context) => SweepCodePage('托板入仓', 9, true)))),
                 _buildContainerButtom(context, 'assets/icon/icon_out_of_warehouse.png', '出仓', false, () => Navigator.push(context, CupertinoPageRoute(builder: (context) => SweepCodePage('出仓', 2, true)))),
                 _buildContainerButtom(context, 'assets/icon/icon_returning_warehouse.png', '返仓', false, () => Navigator.push(context, CupertinoPageRoute(builder: (context) => SweepCodePage('返仓', 4, true)))),
                 // _buildContainerButtom(context, 'assets/icon/icon_return_goods.png', '退货', false, () => Navigator.push(context, CupertinoPageRoute(builder: (context) => SweepCodePage('退货', 5, true)))),
                 _buildContainerButtom(context, 'assets/icon/icon_return_goods.png', '出仓调整', false, () => _buildShowBottomSheet(context)),
-                _buildContainerButtom(context, 'assets/icon/icon_return_goods.png', '托板调整', false, () => _buildShowPallet(context))
+                //_buildContainerButtom(context, 'assets/icon/icon_return_goods.png', '托板调整', false, () => _buildShowPallet(context))
               ],
             ),
           ),
@@ -81,7 +81,7 @@ class HomePage extends StatelessWidget {
   _buildShowBottomSheet(BuildContext context) {
     print('测试');
     showModalBottomSheet(
-      context: context, 
+      context: context,
       builder: (_) {
         return Container(
           height: ScreenUtil().setHeight(300),
@@ -93,7 +93,7 @@ class HomePage extends StatelessWidget {
                 onTap: () {
                   Navigator.pop(context);
                   Navigator.push(context, CupertinoPageRoute(builder: (context) => SweepCodePage('出仓调整·添加', 7, true)));
-                }, 
+                },
               ),
               ListTile(
                 leading: Icon(Icons.delete_forever),
@@ -101,7 +101,7 @@ class HomePage extends StatelessWidget {
                 onTap: () {
                   Navigator.pop(context);
                   Navigator.push(context, CupertinoPageRoute(builder: (context) => SweepCodePage('出仓调整·减少', 7, false)));
-                }, 
+                },
               )
             ],
           ),
