@@ -46,7 +46,7 @@ class _SweepCodePageState extends State<SweepCodePage> with TickerProviderStateM
         if (_textEditingController.text.length == labelLength) {
           _bloc.getLabelMsg(_textEditingController.text, widget.type, _textEditingController, widget.isAdd, _scanNumberEditingController);
         }
-      });      
+      });
     });
     _bloc.initSweepCodeVokey(widget.type, widget.isAdd);
     _bloc.getSweepCodeVo();
@@ -62,12 +62,12 @@ class _SweepCodePageState extends State<SweepCodePage> with TickerProviderStateM
       appBar: AppBar(
         title: Text(widget.title),
         actions: <Widget>[
-          
+
           IconButton(
             icon: ImageIcon(
               AssetImage('assets/icon/icon_fun.png'),
               size: 42,
-            ), 
+            ),
             onPressed: () {
               showModalBottomSheet(context: context, builder: (context) {
                 return Stack(
@@ -133,11 +133,14 @@ class _SweepCodePageState extends State<SweepCodePage> with TickerProviderStateM
                                   onTap: () {
                                     if (widget.type == 7) {
                                       if (_scanNumberEditingController.text == '') {
+                                        Navigator.pop(context);
                                         showToast('请输入出库单号');
                                       } else {
+                                        Navigator.pop(context);
                                         _bloc.uploadData(widget.type, sanpshop.data, _scanNumberEditingController, widget.isAdd);
                                       }
                                     } else {
+                                      Navigator.pop(context);
                                       _bloc.uploadData(widget.type, sanpshop.data, _scanNumberEditingController, widget.isAdd);
                                     }
                                   }
@@ -157,7 +160,7 @@ class _SweepCodePageState extends State<SweepCodePage> with TickerProviderStateM
       ),
       body: Column(
         children: <Widget>[
-          widget.type == 7 ? 
+          widget.type == 7 ?
             Container(
               padding: EdgeInsets.all(10.0),
               child: TextField(
@@ -170,7 +173,7 @@ class _SweepCodePageState extends State<SweepCodePage> with TickerProviderStateM
                   )
                 ),
               ),
-            ) : 
+            ) :
             Container(),
           Container(
             padding: EdgeInsets.all(10.0),
@@ -225,7 +228,7 @@ class _SweepCodePageState extends State<SweepCodePage> with TickerProviderStateM
                                     } else {
                                       SweepCodeVo _sweepCodeVo = sanpshop.data;
                                       return Text('明细（${_sweepCodeVo.labelList.length} ）');
-                                    }                                    
+                                    }
                                   },
                                 )
                               )
